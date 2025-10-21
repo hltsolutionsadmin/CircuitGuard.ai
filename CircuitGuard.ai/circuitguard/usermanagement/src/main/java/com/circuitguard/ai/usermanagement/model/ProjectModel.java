@@ -3,13 +3,16 @@ package com.circuitguard.ai.usermanagement.model;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectType;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "PROJECTS", indexes = {
@@ -19,7 +22,7 @@ import java.util.*;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@ToString(callSuper = true, exclude = {"teamMembers", "tickets"})
+@ToString(callSuper = true, exclude = {"teamMembers", "tickets", "technologyStack"})
 public class ProjectModel extends GenericModel {
 
     @Column(name = "NAME", nullable = false)
@@ -60,11 +63,11 @@ public class ProjectModel extends GenericModel {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketModel> tickets = new ArrayList<>();
 
-    @Column(nullable = false)
-    private int progressPercentage = 0;
-
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectTechModel> technologyStack = new ArrayList<>();
+
+    @Column(nullable = false)
+    private int progressPercentage = 0;
 
     @Column(name = "BUDGET_RANGE")
     private String budgetRange;
@@ -81,33 +84,4 @@ public class ProjectModel extends GenericModel {
     @Column(name = "ARCHIVED", nullable = false)
     private Boolean archived = false;
 
-    public void addTeamMember(UserModel user) {
-        this.teamMembers.add(user);
-    }
-
-    public void removeTeamMember(UserModel user) {
-        this.teamMembers.remove(user);
-    }
-
-    public void addTicket(TicketModel ticket) {
-        this.tickets.add(ticket);
-        ticket.setProject(this);
-    }
-
-    public void removeTicket(TicketModel ticket) {
-        this.tickets.remove(ticket);
-        ticket.setProject(null);
-    }
-
-    public void addTechnology(String tech) {
-        ProjectTechModel projectTech = new ProjectTechModel();
-        projectTech.setTech(tech);
-        projectTech.setProject(this);
-        this.technologyStack.add(projectTech);
-    }
-
-    public void removeTechnology(ProjectTechModel techModel) {
-        this.technologyStack.remove(techModel);
-        techModel.setProject(null);
-    }
 }
