@@ -2,22 +2,24 @@ package com.circuitguard.ai.usermanagement.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 @Entity
-@Table(name = "PROJECT_TECH_STACK", indexes = {
-        @Index(name = "idx_project_tech", columnList = "PROJECT_ID, TECH")
-})
+@Table(name = "PROJECT_TECH_STACK")
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
-@ToString(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
 public class ProjectTechModel extends GenericModel {
-
-    @Column(name = "TECH", nullable = false)
-    private String tech;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "PROJECT_ID", nullable = false)
     private ProjectModel project;
 
+    @Column(name = "TECHNOLOGY_NAME", nullable = false)
+    private String technologyName;
 
+    @Column(name = "VERSION")
+    private String version;
 }

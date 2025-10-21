@@ -11,5 +11,4 @@ public interface ProjectTechRepository extends JpaRepository<ProjectTechModel, L
 
     List<ProjectTechModel> findByProjectId(Long projectId);
 
-    boolean existsByProjectIdAndTech(Long projectId, String tech);
 }

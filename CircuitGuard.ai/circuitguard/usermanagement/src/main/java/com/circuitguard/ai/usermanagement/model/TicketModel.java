@@ -53,16 +53,11 @@ public class TicketModel extends GenericModel {
     @Column(name = "DUE_DATE")
     private LocalDateTime dueDate;
 
-//    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<TicketCommentModel> comments = new ArrayList<>();
-
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TicketAttachmentModel> attachments = new ArrayList<>();
+    private List<TicketCommentModel> comments = new ArrayList<>();
 
     @Column(name = "IS_ARCHIVED")
     private Boolean archived = false;
-
-
 
 
     }

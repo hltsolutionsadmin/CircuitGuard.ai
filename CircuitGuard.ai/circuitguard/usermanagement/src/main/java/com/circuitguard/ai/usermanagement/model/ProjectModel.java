@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,11 +55,15 @@ public class ProjectModel extends GenericModel {
     @Column(name = "TYPE")
     private ProjectType type;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "PROJECT_TEAM",
-            joinColumns = @JoinColumn(name = "PROJECT_ID"),
-            inverseJoinColumns = @JoinColumn(name = "USER_ID"))
-    private Set<UserModel> teamMembers = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "OWNER_ORG_ID", nullable = false)
+    private OrganizationModel ownerOrganization;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CLIENT_ORG_ID")
+    private OrganizationModel clientOrganization;
+
+
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketModel> tickets = new ArrayList<>();
