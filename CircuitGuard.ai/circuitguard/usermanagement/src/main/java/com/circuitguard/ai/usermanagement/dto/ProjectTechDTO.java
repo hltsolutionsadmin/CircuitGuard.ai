@@ -1,19 +1,19 @@
 package com.circuitguard.ai.usermanagement.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ProjectTechDTO {
-
     private Long id;
 
     @NotBlank(message = "Technology name is required")
-    private String tech;
+    private String technologyName;
+
+    @Size(max = 50)
+    private String version;
 }

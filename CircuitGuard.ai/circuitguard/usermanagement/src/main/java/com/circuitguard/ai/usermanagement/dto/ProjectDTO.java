@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -21,44 +20,44 @@ public class ProjectDTO {
     private Long id;
 
     @NotBlank(message = "Project name is required")
-    @Size(max = 255, message = "Project name cannot exceed 255 characters")
     private String name;
 
     @Size(max = 2000, message = "Description cannot exceed 2000 characters")
     private String description;
 
-    @NotNull(message = "Client ID is required")
+    @NotNull(message = "Client user ID is required")
     private Long clientId;
 
     private Long projectManagerId;
 
     private LocalDate startDate;
+
     private LocalDate endDate;
 
-    @NotNull(message = "Project status is required")
-    private ProjectStatus status;
+    private LocalDate targetEndDate;
+
+    private LocalDate dueDate;
+
+    private ProjectStatus status = ProjectStatus.PLANNED;
 
     private ProjectType type;
 
-    private Set<@NotNull(message = "Team member ID cannot be null") Long> teamMemberIds;
+    @NotNull(message = "Owner organization ID is required")
+    private Long ownerOrganizationId;
 
-    private List<@NotNull(message = "Ticket ID cannot be null") Long> ticketIds;
+    private Long clientOrganizationId;
 
-    private List<ProjectTechDTO> technologyStack;
+    @Min(value = 0, message = "Progress percentage must be at least 0")
+    @Max(value = 100, message = "Progress percentage cannot exceed 100")
+    private int progressPercentage = 0;
 
-    @Min(value = 0, message = "Progress must be at least 0")
-    @Max(value = 100, message = "Progress cannot exceed 100")
-    private int progressPercentage;
-
-    @Size(max = 50, message = "Budget range cannot exceed 50 characters")
     private String budgetRange;
 
-    @Size(max = 50, message = "Expected team size cannot exceed 50 characters")
     private String expectedTeamSize;
 
-    private LocalDate targetEndDate;
-    private LocalDate dueDate;
+    private Boolean archived = false;
 
-    @NotNull
-    private Boolean archived;
+    private List<UserAssignmentDTO> projectMembers;
+
+    private List<ProjectTechDTO> technologyStack;
 }

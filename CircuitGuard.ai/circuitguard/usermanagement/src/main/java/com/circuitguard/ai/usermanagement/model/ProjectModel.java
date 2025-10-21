@@ -7,13 +7,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "PROJECTS", indexes = {
@@ -23,7 +21,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true, onlyExplicitlyIncluded = true)
-@ToString(callSuper = true, exclude = {"teamMembers", "tickets", "technologyStack"})
+@ToString(callSuper = true, exclude = {"tickets", "technologyStack", "userAssignments"})
 public class ProjectModel extends GenericModel {
 
     @Column(name = "NAME", nullable = false)
@@ -47,6 +45,12 @@ public class ProjectModel extends GenericModel {
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
+    @Column(name = "TARGET_END_DATE")
+    private LocalDate targetEndDate;
+
+    @Column(name = "DUE_DATE")
+    private LocalDate dueDate;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false)
     private ProjectStatus status = ProjectStatus.PLANNED;
@@ -63,10 +67,16 @@ public class ProjectModel extends GenericModel {
     @JoinColumn(name = "CLIENT_ORG_ID")
     private OrganizationModel clientOrganization;
 
-
-
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TicketModel> tickets = new ArrayList<>();
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JoinColumn(name = "TARGET_ID", referencedColumnName = "ID", insertable = false, updatable = false)
+    @Where(clause = "TARGET_TYPE = 'PROJECT'")
+    private List<UserAssignmentModel> userAssignments = new ArrayList<>();
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectTechModel> technologyStack = new ArrayList<>();
@@ -80,13 +90,6 @@ public class ProjectModel extends GenericModel {
     @Column(name = "EXPECTED_TEAM_SIZE")
     private String expectedTeamSize;
 
-    @Column(name = "TARGET_END_DATE")
-    private LocalDate targetEndDate;
-
-    @Column(name = "DUE_DATE")
-    private LocalDate dueDate;
-
     @Column(name = "ARCHIVED", nullable = false)
     private Boolean archived = false;
-
 }
