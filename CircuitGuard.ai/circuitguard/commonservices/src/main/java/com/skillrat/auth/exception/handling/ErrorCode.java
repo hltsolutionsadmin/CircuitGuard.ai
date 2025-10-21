@@ -7,6 +7,7 @@ public enum ErrorCode {
     // ===========================
     // User & Auth Errors (1000–1099)
     // ===========================
+    BUSINESS_VALIDATION_FAILED(1002, "Business validation failed", HttpStatus.BAD_REQUEST),
     USER_NOT_FOUND(1000, "User Not Found", HttpStatus.NOT_FOUND),
     SKILL_NOT_FOUND(2001, "Skill not found", HttpStatus.NOT_FOUND),
     USER_ALREADY_EXISTS(1001, "User Already Exists", HttpStatus.CONFLICT),
@@ -45,7 +46,6 @@ public enum ErrorCode {
     OTP_EXPIRED(1801, "OTP Expired", HttpStatus.BAD_REQUEST),
     TOKEN_PROCESSING_ERROR(1804, "Error Processing Refresh Token", HttpStatus.INTERNAL_SERVER_ERROR),
     AZURE_BLOB_UPLOAD_FAILED(4001, "Failed to upload file to Azure Blob Storage", HttpStatus.INTERNAL_SERVER_ERROR),
-
 
     // ===========================
     // Address & App Info (1900–1999)
