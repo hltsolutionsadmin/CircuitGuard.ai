@@ -1,7 +1,7 @@
 package com.circuitguard.ai.usermanagement.services.impl;
 
 
-import com.skillrat.commonservice.enums.ERole;
+import com.circuitguard.commonservice.enums.ERole;
 import com.circuitguard.ai.usermanagement.model.RoleModel;
 import com.circuitguard.ai.usermanagement.repository.RoleRepository;
 import com.circuitguard.ai.usermanagement.services.RoleService;

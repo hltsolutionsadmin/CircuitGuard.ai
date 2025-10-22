@@ -7,7 +7,7 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.skillrat.commonservice.enums.ERole;
+import com.circuitguard.commonservice.enums.ERole;
 
 @Entity
 @Table(

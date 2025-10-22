@@ -5,8 +5,8 @@ import com.circuitguard.ai.usermanagement.model.OrganizationModel;
 import com.circuitguard.ai.usermanagement.populator.OrganizationPopulator;
 import com.circuitguard.ai.usermanagement.repository.OrganizationRepository;
 import com.circuitguard.ai.usermanagement.services.OrganizationService;
-import com.skillrat.auth.exception.handling.ErrorCode;
-import com.skillrat.auth.exception.handling.HltCustomerException;
+import com.circuitguard.auth.exception.handling.ErrorCode;
+import com.circuitguard.auth.exception.handling.HltCustomerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,7 +31,6 @@ public class OrganizationServiceImpl implements OrganizationService {
         OrganizationModel model;
 
         if (dto.getId() != null) {
-            // UPDATE
             model = organizationRepository.findById(dto.getId())
                     .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND));
             model.setName(dto.getName());
@@ -39,7 +38,6 @@ public class OrganizationServiceImpl implements OrganizationService {
             model.setDomainName(dto.getDomainName());
             model.setActive(dto.getActive());
         } else {
-            // CREATE
             if (organizationRepository.existsByNameIgnoreCase(dto.getName())) {
                 throw new HltCustomerException(ErrorCode.BUSINESS_CODE_ALREADY_EXISTS);
             }

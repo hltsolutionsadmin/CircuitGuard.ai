@@ -4,7 +4,7 @@ import com.circuitguard.ai.usermanagement.dto.ProjectDTO;
 import com.circuitguard.ai.usermanagement.dto.ProjectTechDTO;
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
 import com.circuitguard.ai.usermanagement.model.ProjectModel;
-import com.skillrat.utils.Populator;
+import com.circuitguard.utils.Populator;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

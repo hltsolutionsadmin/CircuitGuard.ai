@@ -1,8 +1,8 @@
 package com.circuitguard.ai.usermanagement.services.impl;
 
-import com.skillrat.auth.exception.handling.ErrorCode;
-import com.skillrat.auth.exception.handling.HltCustomerException;
-import com.skillrat.commonservice.user.UserDetailsImpl;
+import com.circuitguard.auth.exception.handling.ErrorCode;
+import com.circuitguard.auth.exception.handling.HltCustomerException;
+import com.circuitguard.commonservice.user.UserDetailsImpl;
 import com.circuitguard.ai.usermanagement.dto.AddressDTO;
 import com.circuitguard.ai.usermanagement.model.AddressModel;
 import com.circuitguard.ai.usermanagement.model.UserModel;
@@ -10,8 +10,8 @@ import com.circuitguard.ai.usermanagement.populator.AddressPopulator;
 import com.circuitguard.ai.usermanagement.repository.AddressRepository;
 import com.circuitguard.ai.usermanagement.services.AddressService;
 import com.circuitguard.ai.usermanagement.services.UserService;
-import com.skillrat.utils.SRBaseEndpoint;
-import com.skillrat.utils.SecurityUtils;
+import com.circuitguard.utils.SRBaseEndpoint;
+import com.circuitguard.utils.SecurityUtils;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -2,7 +2,7 @@ package com.circuitguard.ai.usermanagement.controllers;
 
 import com.circuitguard.ai.usermanagement.dto.OrganizationDTO;
 import com.circuitguard.ai.usermanagement.services.OrganizationService;
-import com.skillrat.commonservice.dto.StandardResponse;
+import com.circuitguard.commonservice.dto.StandardResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,18 +24,14 @@ public class OrganizationController {
         return StandardResponse.single(msg, result);
     }
 
-    /**
-     * Get organization by ID
-     */
+
     @GetMapping("/{id}")
     public StandardResponse<OrganizationDTO> getOrganizationById(@PathVariable Long id) {
         OrganizationDTO result = organizationService.getOrganizationById(id);
         return StandardResponse.single("Organization fetched successfully", result);
     }
 
-    /**
-     * Get all organizations with optional filters and pagination
-     */
+
     @GetMapping
     public StandardResponse<Page<OrganizationDTO>> getAllOrganizations(
             @RequestParam(defaultValue = "0") int page,
@@ -48,9 +44,7 @@ public class OrganizationController {
         return StandardResponse.page("Organizations fetched successfully", result);
     }
 
-    /**
-     * Deactivate organization (soft delete)
-     */
+
     @DeleteMapping("/{id}")
     public StandardResponse<Void> deactivateOrganization(@PathVariable Long id) {
         organizationService.deactivateOrganization(id);

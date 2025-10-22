@@ -1,11 +1,11 @@
 package com.circuitguard.ai.usermanagement.controllers;
 
-import com.skillrat.commonservice.dto.StandardResponse;
-import com.skillrat.commonservice.user.UserDetailsImpl;
+import com.circuitguard.commonservice.dto.StandardResponse;
+import com.circuitguard.commonservice.user.UserDetailsImpl;
 import com.circuitguard.ai.usermanagement.dto.AddressDTO;
 import com.circuitguard.ai.usermanagement.dto.response.ApiResponse;
 import com.circuitguard.ai.usermanagement.services.AddressService;
-import com.skillrat.utils.SecurityUtils;
+import com.circuitguard.utils.SecurityUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

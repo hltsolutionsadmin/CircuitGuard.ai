@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @EnableScheduling
 //@EnableJpaAuditing(auditorAwareRef = "auditorAware")
-@ComponentScan(basePackages = {"com.circuitguard.ai.usermanagement", "com.skillrat.auth"})
+@ComponentScan(basePackages = {"com.circuitguard.ai.usermanagement", "com.circuitguard.auth"})
 public class UserManagement {
 
     public static void main(String[] args) {
