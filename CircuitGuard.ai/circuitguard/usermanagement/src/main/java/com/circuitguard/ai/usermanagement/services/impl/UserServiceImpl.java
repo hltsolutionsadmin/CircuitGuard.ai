@@ -3,20 +3,21 @@ package com.circuitguard.ai.usermanagement.services.impl;
 import com.circuitguard.ai.usermanagement.model.MediaModel;
 import com.circuitguard.ai.usermanagement.model.RoleModel;
 import com.circuitguard.ai.usermanagement.model.UserModel;
-import com.skillrat.auth.UserServiceAdapter;
-import com.skillrat.auth.exception.handling.ErrorCode;
-import com.skillrat.auth.exception.handling.HltCustomerException;
-import com.skillrat.commonservice.dto.BasicOnboardUserDTO;
-import com.skillrat.commonservice.dto.MediaDTO;
-import com.skillrat.commonservice.dto.UserDTO;
-import com.skillrat.commonservice.enums.ERole;
-import com.skillrat.commonservice.user.UserDetailsImpl;
+import com.circuitguard.commonservice.dto.Role;
+import com.circuitguard.auth.UserServiceAdapter;
+import com.circuitguard.auth.exception.handling.ErrorCode;
+import com.circuitguard.auth.exception.handling.HltCustomerException;
+import com.circuitguard.commonservice.dto.BasicOnboardUserDTO;
+import com.circuitguard.commonservice.dto.MediaDTO;
+import com.circuitguard.commonservice.dto.UserDTO;
+import com.circuitguard.commonservice.enums.ERole;
+import com.circuitguard.commonservice.user.UserDetailsImpl;
 import com.circuitguard.ai.usermanagement.dto.UserUpdateDTO;
 import com.circuitguard.ai.usermanagement.repository.MediaRepository;
 import com.circuitguard.ai.usermanagement.repository.RoleRepository;
 import com.circuitguard.ai.usermanagement.repository.UserRepository;
 import com.circuitguard.ai.usermanagement.services.UserService;
-import com.skillrat.utils.SecurityUtils;
+import com.circuitguard.utils.SecurityUtils;
 
 import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
@@ -235,8 +236,8 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
     }
 
     public UserDTO convertToUserDto(UserModel user) {
-        Set<com.skillrat.commonservice.dto.Role> roles = user.getRoles().stream()
-                .map(role -> new com.skillrat.commonservice.dto.Role(role.getId(), role.getName()))
+        Set<Role> roles = user.getRoles().stream()
+                .map(role -> new Role(role.getId(), role.getName()))
                 .collect(Collectors.toSet());
 
         String profilePicture = Optional.ofNullable(

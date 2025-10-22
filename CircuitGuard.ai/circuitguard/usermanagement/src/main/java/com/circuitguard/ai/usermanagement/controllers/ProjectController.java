@@ -2,7 +2,7 @@ package com.circuitguard.ai.usermanagement.controllers;
 
 import com.circuitguard.ai.usermanagement.dto.ProjectDTO;
 import com.circuitguard.ai.usermanagement.services.ProjectService;
-import com.skillrat.commonservice.dto.StandardResponse;
+import com.circuitguard.commonservice.dto.StandardResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

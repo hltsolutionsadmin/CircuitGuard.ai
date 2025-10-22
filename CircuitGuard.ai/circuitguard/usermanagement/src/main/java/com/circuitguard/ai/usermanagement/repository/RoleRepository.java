@@ -1,6 +1,6 @@
 package com.circuitguard.ai.usermanagement.repository;
 
-import com.skillrat.commonservice.enums.ERole;
+import com.circuitguard.commonservice.enums.ERole;
 import com.circuitguard.ai.usermanagement.model.RoleModel;
 
 import org.springframework.data.jpa.repository.JpaRepository;

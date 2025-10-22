@@ -3,7 +3,7 @@ package com.circuitguard.ai.usermanagement.controllers;
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.services.UserAssignmentService;
-import com.skillrat.commonservice.dto.StandardResponse;
+import com.circuitguard.commonservice.dto.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;

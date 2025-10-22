@@ -2,8 +2,6 @@ package com.circuitguard.ai.usermanagement.services.impl;
 
 import org.springframework.stereotype.Service;
 
-import com.skillrat.auth.exception.handling.ErrorCode;
-import com.skillrat.auth.exception.handling.HltCustomerException;
 import com.circuitguard.ai.usermanagement.dto.MediaDTO;
 import com.circuitguard.ai.usermanagement.model.MediaModel;
 import com.circuitguard.ai.usermanagement.populator.MediaPopulator;

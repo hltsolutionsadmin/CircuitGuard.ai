@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.skillrat.auth.JwtUtils;
-import com.skillrat.auth.exception.handling.ErrorCode;
-import com.skillrat.auth.exception.handling.HltCustomerException;
-import com.skillrat.commonservice.dto.LoggedInUser;
-import com.skillrat.commonservice.dto.StandardResponse;
-import com.skillrat.commonservice.enums.ERole;
+import com.circuitguard.auth.JwtUtils;
+import com.circuitguard.auth.exception.handling.ErrorCode;
+import com.circuitguard.auth.exception.handling.HltCustomerException;
+import com.circuitguard.commonservice.dto.LoggedInUser;
+import com.circuitguard.commonservice.dto.StandardResponse;
+import com.circuitguard.commonservice.enums.ERole;
 import com.circuitguard.ai.usermanagement.dto.request.LoginRequest;
 import com.circuitguard.ai.usermanagement.dto.request.RefreshTokenRequest;
 import com.circuitguard.ai.usermanagement.dto.request.UsernameLoginRequest;
@@ -35,7 +35,7 @@ import com.circuitguard.ai.usermanagement.services.RoleService;
 import com.circuitguard.ai.usermanagement.services.UserOTPService;
 import com.circuitguard.ai.usermanagement.services.UserService;
 import com.circuitguard.ai.usermanagement.services.impl.UserDetailsServiceImpl;
-import com.skillrat.utils.SRBaseEndpoint;
+import com.circuitguard.utils.SRBaseEndpoint;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

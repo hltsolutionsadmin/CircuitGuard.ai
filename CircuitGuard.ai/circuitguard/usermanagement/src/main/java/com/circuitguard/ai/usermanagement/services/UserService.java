@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import com.skillrat.commonservice.dto.BasicOnboardUserDTO;
-import com.skillrat.commonservice.dto.UserDTO;
-import com.skillrat.commonservice.enums.ERole;
+import com.circuitguard.commonservice.dto.BasicOnboardUserDTO;
+import com.circuitguard.commonservice.dto.UserDTO;
+import com.circuitguard.commonservice.enums.ERole;
 import com.circuitguard.ai.usermanagement.dto.UserUpdateDTO;
 import com.circuitguard.ai.usermanagement.model.UserModel;
 

@@ -14,15 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.hlt.customerservices.CustomerIntegrationService;
-import com.skillrat.auth.exception.handling.ErrorCode;
-import com.skillrat.auth.exception.handling.HltCustomerException;
-import com.skillrat.customerservices.impl.CustomerIntegrationServiceImpl;
+import com.circuitguard.auth.exception.handling.ErrorCode;
+import com.circuitguard.auth.exception.handling.HltCustomerException;
+import com.circuitguard.customerservices.impl.CustomerIntegrationServiceImpl;
 import com.circuitguard.ai.usermanagement.dto.UserOTPDTO;
 import com.circuitguard.ai.usermanagement.model.UserModel;
 import com.circuitguard.ai.usermanagement.model.UserOTPModel;
 import com.circuitguard.ai.usermanagement.services.UserOTPService;
 import com.circuitguard.ai.usermanagement.services.UserService;
-import com.skillrat.utils.SRBaseEndpoint;
+import com.circuitguard.utils.SRBaseEndpoint;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;

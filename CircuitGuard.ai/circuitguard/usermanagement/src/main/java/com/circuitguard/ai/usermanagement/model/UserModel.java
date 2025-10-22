@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 import java.time.LocalDate;
 import java.util.*;
 
-import com.skillrat.auth.EncryptedStringConverter;
+import com.circuitguard.auth.EncryptedStringConverter;
 
 @Entity
 @Table(

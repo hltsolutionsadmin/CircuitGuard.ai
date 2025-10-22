@@ -3,7 +3,7 @@ package com.circuitguard.ai.usermanagement.controllers;
 import com.circuitguard.ai.usermanagement.dto.TicketDTO;
 import com.circuitguard.ai.usermanagement.dto.TicketCommentDTO;
 import com.circuitguard.ai.usermanagement.services.TicketService;
-import com.skillrat.commonservice.dto.StandardResponse;
+import com.circuitguard.commonservice.dto.StandardResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;

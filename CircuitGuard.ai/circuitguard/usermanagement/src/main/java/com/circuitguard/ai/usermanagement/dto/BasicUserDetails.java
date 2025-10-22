@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.skillrat.commonservice.dto.MediaDTO;
+import com.circuitguard.commonservice.dto.MediaDTO;
 
 import java.util.List;
 

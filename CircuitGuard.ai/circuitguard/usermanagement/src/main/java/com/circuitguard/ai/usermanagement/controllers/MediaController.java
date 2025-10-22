@@ -1,12 +1,12 @@
 package com.circuitguard.ai.usermanagement.controllers;
 
-import com.skillrat.auth.exception.handling.ErrorCode;
-import com.skillrat.auth.exception.handling.HltCustomerException;
-import com.skillrat.commonservice.dto.StandardResponse;
-import com.skillrat.commonservice.user.UserDetailsImpl;
+import com.circuitguard.auth.exception.handling.ErrorCode;
+import com.circuitguard.auth.exception.handling.HltCustomerException;
+import com.circuitguard.commonservice.dto.StandardResponse;
+import com.circuitguard.commonservice.user.UserDetailsImpl;
 import com.circuitguard.ai.usermanagement.dto.MediaDTO;
 import com.circuitguard.ai.usermanagement.services.MediaService;
-import com.skillrat.utils.SecurityUtils;
+import com.circuitguard.utils.SecurityUtils;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

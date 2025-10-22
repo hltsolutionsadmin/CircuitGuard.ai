@@ -2,7 +2,7 @@ package com.circuitguard.ai.usermanagement.populator;
 
 import com.circuitguard.ai.usermanagement.dto.MediaDTO;
 import com.circuitguard.ai.usermanagement.model.MediaModel;
-import com.skillrat.utils.Populator;
+import com.circuitguard.utils.Populator;
 
 import org.springframework.stereotype.Component;
 
