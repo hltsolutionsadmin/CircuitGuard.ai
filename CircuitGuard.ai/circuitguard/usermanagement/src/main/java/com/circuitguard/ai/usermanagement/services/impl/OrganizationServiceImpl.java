@@ -6,8 +6,8 @@ import com.circuitguard.ai.usermanagement.model.RoleModel;
 import com.circuitguard.ai.usermanagement.model.UserModel;
 import com.circuitguard.ai.usermanagement.populator.OrganizationPopulator;
 import com.circuitguard.ai.usermanagement.repository.OrganizationRepository;
-import com.circuitguard.ai.usermanagement.repository.RoleRepository;
 import com.circuitguard.ai.usermanagement.services.OrganizationService;
+import com.circuitguard.ai.usermanagement.services.UserService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
 import com.circuitguard.commonservice.enums.ERole;
@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,9 +32,8 @@ public class OrganizationServiceImpl implements OrganizationService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationPopulator organizationPopulator;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
-
-
+    private final RoleServiceImpl roleService;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -45,10 +44,12 @@ public class OrganizationServiceImpl implements OrganizationService {
         if (dto.getId() != null) {
             model = organizationRepository.findById(dto.getId())
                     .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND));
+
             model.setName(dto.getName());
             model.setDescription(dto.getDescription());
             model.setDomainName(dto.getDomainName());
             model.setActive(dto.getActive());
+
         } else {
             if (organizationRepository.existsByNameIgnoreCase(dto.getName())) {
                 throw new HltCustomerException(ErrorCode.BUSINESS_CODE_ALREADY_EXISTS);
@@ -61,22 +62,9 @@ public class OrganizationServiceImpl implements OrganizationService {
                     .active(true)
                     .build();
 
-            UserModel adminUser = new UserModel();
-            adminUser.setUsername(dto.getAdminUsername());
-            adminUser.setFullName(dto.getAdminFullName());
-            adminUser.setPrimaryContact(dto.getAdminPrimaryContact());
-            adminUser.setPrimaryContactHash(DigestUtils.sha256Hex(dto.getAdminPrimaryContact()));
+            UserModel adminUser = registerNewAdmin(dto);
             adminUser.setOrganization(model);
-
-            String plainPassword = generateRandomPassword(10);
-            adminUser.setPassword(passwordEncoder.encode(plainPassword));
-            Set<ERole> rolesToAssign = Set.of(ERole.ROLE_BUSINESS_ADMIN,ERole.ROLE_USER);
-            adminUser.setRoles(fetchRoles(rolesToAssign));
-
             model.getUsers().add(adminUser);
-
-            dto.setGeneratedPassword(plainPassword);
-            dto.setGeneratedUsername(adminUser.getUsername());
         }
 
         OrganizationModel saved = organizationRepository.save(model);
@@ -84,29 +72,32 @@ public class OrganizationServiceImpl implements OrganizationService {
         OrganizationDTO response = new OrganizationDTO();
         organizationPopulator.populate(saved, response);
 
-        if (dto.getId() == null) {
-            response.setGeneratedUsername(dto.getGeneratedUsername());
-            response.setGeneratedPassword(dto.getGeneratedPassword());
-        }
-
         return response;
     }
 
-    private Set<RoleModel> fetchRoles(Set<ERole> roles) {
-        return roleRepository.findByNameIn(roles);
-    }
+    private UserModel registerNewAdmin(OrganizationDTO dto) {
+        UserModel user = new UserModel();
 
-    private String generateRandomPassword(int length) {
-        String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        SecureRandom random = new SecureRandom();
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        user.setUsername(dto.getAdminUsername());
+        user.setFullName(dto.getAdminFullName());
+        user.setPrimaryContact(dto.getAdminPrimaryContact());
+        user.setPrimaryContactHash(DigestUtils.sha256Hex(dto.getAdminPrimaryContact()));
+        user.setPassword(dto.getAdminPassword());
+        user.setRecentActivityDate(LocalDate.now());
+
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            user.setEmail(dto.getEmail());
+            user.setEmailHash(DigestUtils.sha256Hex(dto.getEmail().trim().toLowerCase()));
         }
-        return sb.toString();
+
+        Set<RoleModel> roles = Set.of(
+                roleService.findByErole(ERole.ROLE_BUSINESS_ADMIN),
+                roleService.findByErole(ERole.ROLE_USER)
+        );
+        user.setRoles(roles);
+
+        return userService.saveUser(user);
     }
-
-
 
     @Override
     @Transactional(readOnly = true)

@@ -13,13 +13,13 @@ public class OrganizationDTO {
     private Long id;
 
     @NotBlank(message = "Organization name is required")
-    @Size(max = 150, message = "Organization name must be at most 150 characters")
+    @Size(max = 150)
     private String name;
 
-    @Size(max = 1000, message = "Description must be at most 1000 characters")
+    @Size(max = 1000)
     private String description;
 
-    @Size(max = 100, message = "Domain name must be at most 100 characters")
+    @Size(max = 100)
     private String domainName;
 
     private Boolean active = true;
@@ -36,6 +36,10 @@ public class OrganizationDTO {
     @Size(max = 20)
     private String adminPrimaryContact;
 
-    private String generatedUsername;
-    private String generatedPassword;
+    @NotBlank(message = "Admin password is required")
+    private String adminPassword;
+
+    // Optional
+    @Size(max = 100)
+    private String email;
 }
