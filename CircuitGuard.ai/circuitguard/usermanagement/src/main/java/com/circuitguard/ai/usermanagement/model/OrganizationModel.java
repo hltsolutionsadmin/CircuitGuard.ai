@@ -4,7 +4,6 @@ package com.circuitguard.ai.usermanagement.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.*;
-
 @Entity
 @Table(name = "ORGANIZATION", indexes = {
         @Index(name = "idx_org_name", columnList = "NAME", unique = true)
@@ -36,8 +35,10 @@ public class OrganizationModel extends GenericModel {
     private OrganizationModel organization;
 
     @OneToMany(mappedBy = "ownerOrganization", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ProjectModel> projects = new ArrayList<>();
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserModel> users = new ArrayList<>();
+    @Builder.Default
+    private Set<UserModel> users = new HashSet<>();
 }

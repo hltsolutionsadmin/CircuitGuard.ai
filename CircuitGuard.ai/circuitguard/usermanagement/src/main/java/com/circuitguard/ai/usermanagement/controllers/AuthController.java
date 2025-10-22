@@ -84,8 +84,6 @@ public class AuthController extends SRBaseEndpoint {
             userModel.setEmail(loginRequest.getEmailAddress());
         }
 
-
-
         Set<RoleModel> userRoles = new HashSet<>();
         userRoles.add(roleService.findByErole(ERole.ROLE_USER));
         userModel.setRoles(userRoles);
@@ -116,7 +114,7 @@ public class AuthController extends SRBaseEndpoint {
 
         // 2. Build user with encrypted fields (handled by @Convert)
         UserModel newUser = new UserModel();
-      newUser.setUsername(request.getEmail());
+        newUser.setUsername(request.getEmail());
         newUser.setPassword(request.getPassword());
         newUser.setFullName(request.getFullName());
         newUser.setEmail(request.getEmail());

@@ -12,6 +12,7 @@ import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
 import com.circuitguard.commonservice.enums.ERole;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -64,11 +65,12 @@ public class OrganizationServiceImpl implements OrganizationService {
             adminUser.setUsername(dto.getAdminUsername());
             adminUser.setFullName(dto.getAdminFullName());
             adminUser.setPrimaryContact(dto.getAdminPrimaryContact());
+            adminUser.setPrimaryContactHash(DigestUtils.sha256Hex(dto.getAdminPrimaryContact()));
             adminUser.setOrganization(model);
 
             String plainPassword = generateRandomPassword(10);
             adminUser.setPassword(passwordEncoder.encode(plainPassword));
-            Set<ERole> rolesToAssign = Set.of(ERole.ROLE_BUSINESS_ADMIN);
+            Set<ERole> rolesToAssign = Set.of(ERole.ROLE_BUSINESS_ADMIN,ERole.ROLE_USER);
             adminUser.setRoles(fetchRoles(rolesToAssign));
 
             model.getUsers().add(adminUser);

@@ -3,6 +3,8 @@ package com.circuitguard.ai.usermanagement.repository;
 import java.util.List;
 import java.util.Optional;
 
+import com.circuitguard.ai.usermanagement.model.OrganizationModel;
+import com.circuitguard.commonservice.enums.ERole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,4 +35,6 @@ public interface UserRepository extends JpaRepository<UserModel, Long> {
     Optional<UserModel> findByPrimaryContactHash(String primaryContactHash);
 
     Optional<UserModel> findByEmailHash(String emailHash);
+
+    boolean existsByOrganizationAndRoles_Name(OrganizationModel organization, ERole roleName);
 }
