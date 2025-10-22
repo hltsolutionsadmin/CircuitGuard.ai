@@ -85,7 +85,8 @@ public class UserModel extends GenericModel {
     @Column(name = "PASSWORD")
     private String password;
 
-
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ORG_ID")
+    private OrganizationModel organization;
 
 }

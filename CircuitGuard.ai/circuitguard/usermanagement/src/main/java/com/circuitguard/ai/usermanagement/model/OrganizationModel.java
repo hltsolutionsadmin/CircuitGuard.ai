@@ -37,4 +37,7 @@ public class OrganizationModel extends GenericModel {
 
     @OneToMany(mappedBy = "ownerOrganization", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectModel> projects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserModel> users = new ArrayList<>();
 }

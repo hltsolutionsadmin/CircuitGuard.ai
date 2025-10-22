@@ -8,7 +8,7 @@ import com.circuitguard.ai.usermanagement.model.CustomerLastLoginModel;
 import com.circuitguard.ai.usermanagement.model.UserModel;
 
 @Repository
-public interface CustomerLastLoginRepository extends JpaRepository<CustomerLastLoginModel, Long> {
+public interface        CustomerLastLoginRepository extends JpaRepository<CustomerLastLoginModel, Long> {
 
     CustomerLastLoginModel findByCustomer(UserModel userModel);
 }
