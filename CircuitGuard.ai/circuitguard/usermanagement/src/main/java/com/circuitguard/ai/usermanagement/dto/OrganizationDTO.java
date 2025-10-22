@@ -23,4 +23,19 @@ public class OrganizationDTO {
     private String domainName;
 
     private Boolean active = true;
+
+    @NotBlank(message = "Admin full name is required")
+    @Size(max = 100)
+    private String adminFullName;
+
+    @NotBlank(message = "Admin username is required")
+    @Size(max = 50)
+    private String adminUsername;
+
+    @NotBlank(message = "Admin primary contact is required")
+    @Size(max = 20)
+    private String adminPrimaryContact;
+
+    private String generatedUsername;
+    private String generatedPassword;
 }
