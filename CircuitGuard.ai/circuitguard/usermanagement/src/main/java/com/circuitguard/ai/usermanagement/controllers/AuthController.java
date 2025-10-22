@@ -116,7 +116,7 @@ public class AuthController extends SRBaseEndpoint {
 
         // 2. Build user with encrypted fields (handled by @Convert)
         UserModel newUser = new UserModel();
-        newUser.setUsername(request.getUsername());
+      newUser.setUsername(request.getEmail());
         newUser.setPassword(request.getPassword());
         newUser.setFullName(request.getFullName());
         newUser.setEmail(request.getEmail());
