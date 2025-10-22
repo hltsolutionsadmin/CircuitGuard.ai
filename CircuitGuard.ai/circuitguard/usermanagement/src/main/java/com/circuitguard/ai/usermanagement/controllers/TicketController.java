@@ -40,15 +40,13 @@ public class TicketController {
         return StandardResponse.page("Tickets fetched successfully", tickets);
     }
 
-   //TODO ::Update ticket
-//    @PutMapping("/{id}")
-//    public StandardResponse<TicketDTO> updateTicket(
-//            @PathVariable Long id,
-//            @Valid @RequestBody TicketDTO ticketDTO
-//    ) {
-//        TicketDTO updated = ticketService.updateTicket(id, ticketDTO);
-//        return StandardResponse.single("Ticket updated successfully", updated);
-//    }
+    @PutMapping("/{id}") public StandardResponse<TicketDTO> updateTicket(
+            @PathVariable Long id,
+           @Valid @RequestBody TicketDTO ticketDTO
+    ) {
+        TicketDTO updated = ticketService.updateTicket(id, ticketDTO);
+        return StandardResponse.single("Ticket updated successfully", updated);
+    }
 
     @DeleteMapping("/{id}")
     public StandardResponse<Void> deleteTicket(@PathVariable Long id) {

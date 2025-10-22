@@ -36,7 +36,6 @@ public class TicketServiceImpl implements TicketService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final TicketPopulator ticketPopulator;
-
     private final TicketCommentRepository ticketCommentRepository;
     private final TicketCommentPopulator ticketCommentPopulator;
 
@@ -57,11 +56,9 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public Page<TicketDTO> getAllTickets(Pageable pageable, Long projectId, String statusStr, String priorityStr) {
         Page<TicketModel> page = fetchTicketsWithFilters(pageable, projectId, statusStr, priorityStr);
-
         List<TicketDTO> dtos = page.getContent().stream()
                 .map(ticketPopulator::toDTO)
                 .collect(Collectors.toList());
-
         return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
 
@@ -94,6 +91,33 @@ public class TicketServiceImpl implements TicketService {
         return resultDTO;
     }
 
+    @Override
+    public TicketDTO updateTicket(Long ticketId, TicketDTO ticketDTO) {
+        TicketModel existingTicket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND, "Ticket not found"));
+
+        existingTicket.setTitle(ticketDTO.getTitle() != null ? ticketDTO.getTitle() : existingTicket.getTitle());
+        existingTicket.setDescription(ticketDTO.getDescription() != null ? ticketDTO.getDescription() : existingTicket.getDescription());
+        existingTicket.setStatus(ticketDTO.getStatus() != null ? ticketDTO.getStatus() : existingTicket.getStatus());
+        existingTicket.setPriority(ticketDTO.getPriority() != null ? ticketDTO.getPriority() : existingTicket.getPriority());
+        existingTicket.setDueDate(ticketDTO.getDueDate() != null ? ticketDTO.getDueDate() : existingTicket.getDueDate());
+        existingTicket.setArchived(ticketDTO.getArchived() != null ? ticketDTO.getArchived() : existingTicket.getArchived());
+
+        if (ticketDTO.getProjectId() != null) {
+            ProjectModel project = projectRepository.findById(ticketDTO.getProjectId())
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND, "Project not found"));
+            existingTicket.setProject(project);
+        }
+
+        if (ticketDTO.getAssignedToId() != null) {
+            UserModel assignedTo = userRepository.findById(ticketDTO.getAssignedToId())
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND, "Assigned user not found"));
+            existingTicket.setAssignedTo(assignedTo);
+        }
+
+        TicketModel updatedTicket = ticketRepository.save(existingTicket);
+        return ticketPopulator.toDTO(updatedTicket);
+    }
 
     private TicketModel mapDtoToModel(TicketDTO dto, TicketModel model) {
         model.setTitle(dto.getTitle());
@@ -165,3 +189,4 @@ public class TicketServiceImpl implements TicketService {
         }
     }
 }
+

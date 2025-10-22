@@ -4,6 +4,7 @@ import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.services.UserAssignmentService;
 import com.skillrat.commonservice.dto.StandardResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +58,22 @@ public class UserAssignmentController {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         Page<UserAssignmentDTO> result = userAssignmentService.getAssignmentsByUser(userId, pageable);
         return ResponseEntity.ok(StandardResponse.page("Assignments fetched successfully", result));
+    }
+
+    @GetMapping("/current")
+    public ResponseEntity<StandardResponse<Page<UserAssignmentDTO>>> getCurrentUserAssignments(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        Long currentUserId = userAssignmentService.getCurrentUserId(request);
+
+        Page<UserAssignmentDTO> result = userAssignmentService.getAssignmentsByUser(currentUserId, pageable);
+        return ResponseEntity.ok(StandardResponse.page("Current user assignments fetched successfully", result));
     }
 
     @GetMapping

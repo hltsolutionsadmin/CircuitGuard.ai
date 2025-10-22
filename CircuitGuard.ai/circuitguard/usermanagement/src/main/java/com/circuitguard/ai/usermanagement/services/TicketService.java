@@ -13,6 +13,8 @@ public interface TicketService {
 
     Page<TicketDTO> getAllTickets(Pageable pageable, Long projectId, String status, String priority);
 
+    TicketDTO updateTicket(Long ticketId, TicketDTO ticketDTO);
+
     void deleteTicket(Long ticketId);
 
     TicketCommentDTO addComment(Long ticketId, TicketCommentDTO commentDTO);
