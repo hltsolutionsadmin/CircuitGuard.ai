@@ -1,6 +1,8 @@
 package com.circuitguard.ai.usermanagement.dto;
 
+import com.circuitguard.ai.usermanagement.dto.enums.TicketCategory;
 import com.circuitguard.ai.usermanagement.dto.enums.TicketPriority;
+import com.circuitguard.ai.usermanagement.dto.enums.TicketSeverity;
 import com.circuitguard.ai.usermanagement.dto.enums.TicketStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -45,4 +47,24 @@ public class TicketDTO {
     private Boolean archived = false;
 
     private List<TicketCommentDTO> comments;
+
+
+    //added fields
+    private String incidentCode;
+
+    private TicketSeverity severity;
+
+    private TicketCategory category;
+
+    private String affectedServices;
+
+    private String businessImpact;
+
+    private Boolean isDraft = false;
+
+    private String department;
+
+    private String location;
 }
+
+
