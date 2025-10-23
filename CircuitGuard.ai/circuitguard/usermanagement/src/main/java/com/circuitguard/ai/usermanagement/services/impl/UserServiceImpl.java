@@ -1,15 +1,13 @@
 package com.circuitguard.ai.usermanagement.services.impl;
 
 import com.circuitguard.ai.usermanagement.model.MediaModel;
+import com.circuitguard.ai.usermanagement.model.OrganizationModel;
 import com.circuitguard.ai.usermanagement.model.RoleModel;
 import com.circuitguard.ai.usermanagement.model.UserModel;
-import com.circuitguard.commonservice.dto.Role;
+import com.circuitguard.commonservice.dto.*;
 import com.circuitguard.auth.UserServiceAdapter;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
-import com.circuitguard.commonservice.dto.BasicOnboardUserDTO;
-import com.circuitguard.commonservice.dto.MediaDTO;
-import com.circuitguard.commonservice.dto.UserDTO;
 import com.circuitguard.commonservice.enums.ERole;
 import com.circuitguard.commonservice.user.UserDetailsImpl;
 import com.circuitguard.ai.usermanagement.dto.UserUpdateDTO;
@@ -245,6 +243,17 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
                 .map(MediaModel::getUrl)
                 .orElse(null);
 
+        OrganizationDTO organizationDTO = null;
+        OrganizationModel organization = user.getOrganization();
+        if (organization != null) {
+            organizationDTO = OrganizationDTO.builder()
+                    .id(organization.getId())
+                    .name(organization.getName())
+                    .domainName(organization.getDomainName())
+                    .active(organization.getActive())
+                    .build();
+        }
+
 
         return UserDTO.builder()
                 .id(user.getId())
@@ -256,6 +265,7 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
                 .gender(user.getGender())
                 .profilePicture(profilePicture)
                 .roles(roles)
+                .organization(organizationDTO)
                 .password(user.getPassword())
                 .build();
     }

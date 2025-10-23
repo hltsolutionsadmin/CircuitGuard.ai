@@ -62,6 +62,7 @@ public class UserDTO {
 
     private String branch;
     private List<MediaDTO> media;
+    private OrganizationDTO organization;
     private UserVerificationStatus userVerificationStatus;
     private Integer studentStartYear;
     private Integer studentEndYear;
