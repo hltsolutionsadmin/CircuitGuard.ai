@@ -24,4 +24,10 @@ public class UserAssignmentDTO {
     private String role;
 
     private Boolean active;
+
+    private String username;
+    private String fullName;
+    private String primaryContact;
+    private String password;
+    private String email;
 }

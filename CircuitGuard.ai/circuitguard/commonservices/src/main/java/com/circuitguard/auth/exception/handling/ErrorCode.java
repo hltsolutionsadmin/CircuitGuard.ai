@@ -20,7 +20,8 @@ public enum ErrorCode {
     DUPLICATE_ENTRY(1005, "Duplicate entry already exists", HttpStatus.CONFLICT),
     PROJECT_NOT_FOUND(1003, "Project not found", HttpStatus.NOT_FOUND),
     TECH_STACK_NOT_FOUND(1004, "Technology stack not found", HttpStatus.NOT_FOUND),
-
+    ASSIGNMENT_NOT_FOUND(2001, "User Assignment not found", HttpStatus.NOT_FOUND),
+    INVALID_ASSIGNMENT_REQUEST(2002, "User ID, TargetType, and TargetID are required", HttpStatus.BAD_REQUEST),
     // ===========================
     OTP_EXPIRED(1801, "OTP Expired", HttpStatus.BAD_REQUEST),
     TOKEN_PROCESSING_ERROR(1804, "Error Processing Refresh Token", HttpStatus.INTERNAL_SERVER_ERROR),

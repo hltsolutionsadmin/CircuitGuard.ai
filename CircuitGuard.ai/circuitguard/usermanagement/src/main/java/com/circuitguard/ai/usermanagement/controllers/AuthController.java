@@ -1,4 +1,3 @@
-
 package com.circuitguard.ai.usermanagement.controllers;
 
 import java.time.LocalDate;
@@ -109,10 +108,8 @@ public class AuthController extends SRBaseEndpoint {
     public ResponseEntity<StandardResponse<String>> registerUser(@Valid @RequestBody UsernameLoginRequest request) {
         log.info("Registering user: {}", request.getUsername());
 
-        // 1. Validate uniqueness for username, email, contact
         validateUserUniqueness(request.getUsername(), request.getPrimaryContact(), request.getEmail());
 
-        // 2. Build user with encrypted fields (handled by @Convert)
         UserModel newUser = new UserModel();
         newUser.setUsername(request.getEmail());
         newUser.setPassword(request.getPassword());
