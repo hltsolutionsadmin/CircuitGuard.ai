@@ -1,7 +1,6 @@
 package com.circuitguard.ai.usermanagement.model;
 
-import com.circuitguard.ai.usermanagement.dto.enums.TicketPriority;
-import com.circuitguard.ai.usermanagement.dto.enums.TicketStatus;
+import com.circuitguard.ai.usermanagement.dto.enums.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,5 +58,36 @@ public class TicketModel extends GenericModel {
     @Column(name = "IS_ARCHIVED")
     private Boolean archived = false;
 
+    @Column(name = "DEPARTMENT", length = 255)
+    private String department;
 
-    }
+    @Column(name = "LOCATION", length = 255)
+    private String location;
+
+
+    //added fields
+    @Column(name = "INCIDENT_CODE", unique = true, length = 50)
+    private String incidentCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SEVERITY", length = 50)
+    private TicketSeverity severity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "CATEGORY", length = 50)
+    private TicketCategory category;
+
+    @Column(name = "AFFECTED_SERVICES", length = 2000)
+    private String affectedServices;
+
+
+    @Column(name = "BUSINESS_IMPACT", length = 2000)
+    private String businessImpact;
+
+
+    @Column(name = "IS_DRAFT", nullable = false)
+    private Boolean isDraft = false;
+
+
+
+}

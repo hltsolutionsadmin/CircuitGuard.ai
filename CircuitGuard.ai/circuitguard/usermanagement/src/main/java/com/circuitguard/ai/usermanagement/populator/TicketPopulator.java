@@ -46,6 +46,15 @@ public class TicketPopulator implements Populator<TicketModel, TicketDTO> {
             target.setAssignedToId(source.getAssignedTo().getId());
 //            target.setAssignedToName(source.getAssignedTo().getFullName());
         }
+        target.setIncidentCode(source.getIncidentCode());
+        target.setSeverity(source.getSeverity());
+        target.setCategory(source.getCategory());
+        target.setAffectedServices(source.getAffectedServices());
+        target.setBusinessImpact(source.getBusinessImpact());
+        target.setIsDraft(source.getIsDraft());
+        target.setDepartment(source.getDepartment());
+        target.setLocation(source.getLocation());
+
 
         // Map comments
         if (source.getComments() != null) {
