@@ -63,6 +63,17 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.delete(model);
     }
 
+    @Override
+    public Page<ProjectDTO> getProjectsForOrganization(Long organizationId, Pageable pageable) {
+        Page<ProjectModel> projectsPage = projectRepository.findByOrganization(organizationId, pageable);
+
+        List<ProjectDTO> dtos = projectsPage.getContent().stream()
+                .map(projectPopulator::toDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtos, pageable, projectsPage.getTotalElements());
+    }
+
 
     private ProjectModel mapDtoToModel(ProjectDTO dto, ProjectModel model) {
         model.setName(dto.getName());

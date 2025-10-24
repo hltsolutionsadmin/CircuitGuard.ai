@@ -5,6 +5,8 @@ import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,4 +30,7 @@ public interface ProjectRepository extends JpaRepository<ProjectModel, Long> {
             Long clientId, Long managerId, ProjectStatus status, Pageable pageable);
 
     boolean existsByName(String name);
+
+    @Query("SELECT p FROM ProjectModel p WHERE p.ownerOrganization.id = :orgId OR p.clientOrganization.id = :orgId")
+    Page<ProjectModel> findByOrganization(@Param("orgId") Long organizationId, Pageable pageable);
 }

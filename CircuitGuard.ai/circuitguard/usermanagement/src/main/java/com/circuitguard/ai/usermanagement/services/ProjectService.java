@@ -13,4 +13,7 @@ public interface ProjectService {
     Page<ProjectDTO> getAllProjects(Pageable pageable, Long clientId, Long managerId, String status);
 
     void deleteProject(Long projectId);
+
+    Page<ProjectDTO> getProjectsForOrganization(Long organizationId, Pageable pageable);
+
 }
