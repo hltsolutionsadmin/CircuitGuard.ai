@@ -89,15 +89,15 @@ public class ProjectServiceImpl implements ProjectService {
         model.setExpectedTeamSize(dto.getExpectedTeamSize());
         model.setArchived(dto.getArchived());
 
-        if (dto.getClientId() != null) {
-            model.setClient(userRepository.findById(dto.getClientId())
-                    .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND)));
-        }
+//        if (dto.getClientId() != null) {
+//            model.setClient(userRepository.findById(dto.getClientId())
+//                    .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND)));
+//        }
 
-        if (dto.getProjectManagerId() != null) {
-            model.setProjectManager(userRepository.findById(dto.getProjectManagerId())
-                    .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND)));
-        }
+//        if (dto.getProjectManagerId() != null) {
+//            model.setProjectManager(userRepository.findById(dto.getProjectManagerId())
+//                    .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND)));
+//        }
 
         if (dto.getOwnerOrganizationId() != null) {
             OrganizationModel ownerOrg = new OrganizationModel();
@@ -105,11 +105,11 @@ public class ProjectServiceImpl implements ProjectService {
             model.setOwnerOrganization(ownerOrg);
         }
 
-        if (dto.getClientOrganizationId() != null) {
-            OrganizationModel clientOrg = new OrganizationModel();
-            clientOrg.setId(dto.getClientOrganizationId());
-            model.setClientOrganization(clientOrg);
-        }
+//        if (dto.getClientOrganizationId() != null) {
+//            OrganizationModel clientOrg = new OrganizationModel();
+//            clientOrg.setId(dto.getClientOrganizationId());
+//            model.setClientOrganization(clientOrg);
+//        }
 
         return model;
     }

@@ -32,7 +32,7 @@ public class ProjectModel extends GenericModel {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CLIENT_ID", nullable = false)
+    @JoinColumn(name = "CLIENT_ID", nullable = true)
     private UserModel client;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -52,7 +52,7 @@ public class ProjectModel extends GenericModel {
     private LocalDate dueDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS", nullable = false)
+    @Column(name = "STATUS", nullable = true)
     private ProjectStatus status = ProjectStatus.PLANNED;
 
     @Enumerated(EnumType.STRING)
@@ -60,7 +60,7 @@ public class ProjectModel extends GenericModel {
     private ProjectType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OWNER_ORG_ID", nullable = false)
+    @JoinColumn(name = "OWNER_ORG_ID", nullable = true)
     private OrganizationModel ownerOrganization;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -81,7 +81,7 @@ public class ProjectModel extends GenericModel {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectTechModel> technologyStack = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int progressPercentage = 0;
 
     @Column(name = "BUDGET_RANGE")

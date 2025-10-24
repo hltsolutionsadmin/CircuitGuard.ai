@@ -31,7 +31,6 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationRepository organizationRepository;
     private final OrganizationPopulator organizationPopulator;
-    private final PasswordEncoder passwordEncoder;
     private final RoleServiceImpl roleService;
     private final UserService userService;
 
