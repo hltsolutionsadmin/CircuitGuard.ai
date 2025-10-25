@@ -24,7 +24,7 @@ public class UserDTO {
 
     private String fullName;
 
-    @Size(max = 20)
+
     private String username;
 
     @Size(max = 50)

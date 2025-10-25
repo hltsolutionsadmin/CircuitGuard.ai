@@ -30,9 +30,14 @@ public enum ErrorCode {
     // ===========================
     // Address & App Info (1900–1999)
     // ===========================
+    USER_ALREADY_REGISTERED(1005, "User is already registered for this target", HttpStatus.CONFLICT),
+
+    GROUP_NOT_FOUND(2001, "User group not found", HttpStatus.NOT_FOUND),
+    DUPLICATE_GROUP_NAME(2002, "User group name already exists", HttpStatus.BAD_REQUEST),
     ADDRESS_NOT_FOUND(1901, "Address not found.", HttpStatus.NOT_FOUND),
     INVALID_ADDRESS(1902, "Invalid address data or unauthorized access.", HttpStatus.BAD_REQUEST),
     ACCESS_DENIED(1903, "Access denied —  ownership mismatch for the given user ID.", HttpStatus.BAD_REQUEST),
+    INVALID_ROLE(1005, "Invalid role provided", HttpStatus.BAD_REQUEST),
 
     // ===========================
     // General Exceptions (2000–2099)

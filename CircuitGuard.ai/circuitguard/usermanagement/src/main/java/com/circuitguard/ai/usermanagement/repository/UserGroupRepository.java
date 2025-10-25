@@ -1,0 +1,14 @@
+package com.circuitguard.ai.usermanagement.repository;
+
+import com.circuitguard.ai.usermanagement.model.UserGroupModel;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+@Repository
+public interface UserGroupRepository extends JpaRepository<UserGroupModel, Long> {
+
+    boolean existsByGroupNameIgnoreCase(String groupName);
+}

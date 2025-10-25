@@ -7,13 +7,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserAssignmentRepository extends JpaRepository<UserAssignmentModel, Long> {
 
-    Page<UserAssignmentModel> findByTargetTypeAndTargetIdAndActiveTrue(
-            AssignmentTargetType targetType, Long targetId, Pageable pageable);
+    Page<UserAssignmentModel> findByTargetIdAndTargetType(Long targetId, AssignmentTargetType targetType, Pageable pageable);
 
-    Page<UserAssignmentModel> findByUser_IdAndActiveTrue(Long userId, Pageable pageable);
+    Page<UserAssignmentModel> findByUserId(Long userId, Pageable pageable);
 
-    boolean existsByUser_IdAndTargetTypeAndTargetId(Long userId, AssignmentTargetType targetType, Long targetId);
+    Optional<UserAssignmentModel> findByUser_IdAndTargetTypeAndTargetId(
+            Long userId,
+            AssignmentTargetType targetType,
+            Long targetId
+    );
 }

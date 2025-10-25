@@ -19,10 +19,11 @@ public class UserAssignmentController {
     public UserAssignmentController(UserAssignmentService userAssignmentService) {
         this.userAssignmentService = userAssignmentService;
     }
-//TODO :: add get curent deatils
+
+
     @PostMapping
     public ResponseEntity<StandardResponse<UserAssignmentDTO>> assignUser(@RequestBody UserAssignmentDTO dto) {
-        UserAssignmentDTO saved = userAssignmentService.assignUser(dto);
+        UserAssignmentDTO saved = userAssignmentService.assignUserToTarget(dto);
         return ResponseEntity.ok(StandardResponse.single("User assignment saved successfully", saved));
     }
 
@@ -31,6 +32,7 @@ public class UserAssignmentController {
         UserAssignmentDTO dto = userAssignmentService.getAssignmentById(id);
         return ResponseEntity.ok(StandardResponse.single("User assignment fetched successfully", dto));
     }
+
 
     @GetMapping("/target")
     public ResponseEntity<StandardResponse<Page<UserAssignmentDTO>>> getAssignmentsByTarget(
@@ -46,6 +48,7 @@ public class UserAssignmentController {
         return ResponseEntity.ok(StandardResponse.page("Assignments fetched successfully", result));
     }
 
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<StandardResponse<Page<UserAssignmentDTO>>> getAssignmentsByUser(
             @PathVariable Long userId,
@@ -59,6 +62,7 @@ public class UserAssignmentController {
         return ResponseEntity.ok(StandardResponse.page("Assignments fetched successfully", result));
     }
 
+
     @GetMapping
     public ResponseEntity<StandardResponse<Page<UserAssignmentDTO>>> getAllAssignments(
             @RequestParam(defaultValue = "0") int page,
@@ -70,6 +74,7 @@ public class UserAssignmentController {
         Page<UserAssignmentDTO> result = userAssignmentService.getAllAssignments(pageable);
         return ResponseEntity.ok(StandardResponse.page("All assignments fetched successfully", result));
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<StandardResponse<Void>> removeAssignment(@PathVariable Long id) {

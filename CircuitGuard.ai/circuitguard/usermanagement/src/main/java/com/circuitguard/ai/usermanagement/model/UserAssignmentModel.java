@@ -1,8 +1,12 @@
 package com.circuitguard.ai.usermanagement.model;
 
+import com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -35,9 +39,18 @@ public class UserAssignmentModel extends GenericModel {
     @Column(name = "TARGET_ID", nullable = false)
     private Long targetId;
 
-    @Column(name = "ROLE")
-    private String role;
-
     @Column(name = "IS_ACTIVE", nullable = false)
     private Boolean active = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ROLE", nullable = false)
+    private AssignmentRole role;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "USER_ASSIGNMENT_GROUPS",
+            joinColumns = @JoinColumn(name = "USER_ASSIGNMENT_ID"),
+            inverseJoinColumns = @JoinColumn(name = "USER_GROUP_ID")
+    )
+    private Set<UserGroupModel> groups = new HashSet<>();
 }

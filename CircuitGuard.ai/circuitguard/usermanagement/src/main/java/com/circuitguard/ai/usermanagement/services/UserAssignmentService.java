@@ -7,7 +7,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface UserAssignmentService {
 
-    UserAssignmentDTO assignUser(UserAssignmentDTO userAssignmentDTO);
+
+    UserAssignmentDTO assignUserToTarget(UserAssignmentDTO userAssignmentDTO);
 
     void removeAssignment(Long assignmentId);
 
