@@ -21,8 +21,7 @@ public class TicketDTO {
 
     private Long id;
 
-    @NotBlank(message = "Ticket ID cannot be blank")
-    @Size(max = 50, message = "Ticket ID cannot exceed 50 characters")
+  
     private String ticketId;
 
 

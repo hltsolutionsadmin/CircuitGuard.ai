@@ -28,7 +28,7 @@ public class ProjectModel extends GenericModel {
     @EqualsAndHashCode.Include
     private String name;
 
-    @Column(name = "PROJECT_CODE", nullable = false, unique = true, length = 10)
+    @Column(name = "PROJECT_CODE",unique = true, length = 10)
     private String projectCode;
 
     @Column(name = "DESCRIPTION", length = 2000)

@@ -43,9 +43,9 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public TicketDTO createTicket(TicketDTO ticketDTO) {
         TicketModel ticketModel = mapDtoToModel(ticketDTO, new TicketModel());
-        if (ticketModel.getTicketId() == null) {
-            ticketModel.setTicketId(generateTicketId(ticketModel.getProject()));
-        }
+//        if (ticketModel.getTicketId() == null) {
+//            ticketModel.setTicketId(generateTicketId(ticketModel.getProject()));
+//        }
         TicketModel saved = ticketRepository.save(ticketModel);
         return ticketPopulator.toDTO(saved);
     }

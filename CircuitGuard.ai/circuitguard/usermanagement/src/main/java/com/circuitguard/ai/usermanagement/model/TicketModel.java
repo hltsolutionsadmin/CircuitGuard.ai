@@ -21,7 +21,7 @@ import java.util.List;
 @Setter
 public class TicketModel extends GenericModel {
 
-    @Column(name = "TICKET_ID", unique = true, nullable = false, length = 50)
+    @Column(name = "TICKET_ID", unique = true, nullable = true, length = 50)
     private String ticketId;
 
     @Column(name = "TITLE", nullable = false, length = 500)
