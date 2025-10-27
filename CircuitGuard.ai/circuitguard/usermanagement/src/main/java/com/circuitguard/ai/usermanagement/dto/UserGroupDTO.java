@@ -16,4 +16,6 @@ public class UserGroupDTO {
     private String groupName;
 
     private String description;
+
+    private ProjectDTO project;
 }

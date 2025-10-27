@@ -1,8 +1,11 @@
 package com.circuitguard.ai.usermanagement.services.impl;
 
+import com.circuitguard.ai.usermanagement.dto.ProjectDTO;
 import com.circuitguard.ai.usermanagement.dto.UserGroupDTO;
+import com.circuitguard.ai.usermanagement.model.ProjectModel;
 import com.circuitguard.ai.usermanagement.model.UserGroupModel;
 import com.circuitguard.ai.usermanagement.populator.UserGroupPopulator;
+import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
 import com.circuitguard.ai.usermanagement.repository.UserGroupRepository;
 import com.circuitguard.ai.usermanagement.services.UserGroupService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserGroupServiceImpl implements UserGroupService {
 
     private final UserGroupRepository userGroupRepository;
+    private final ProjectRepository projectRepository;
     private final UserGroupPopulator userGroupPopulator;
 
     @Override
@@ -25,15 +29,17 @@ public class UserGroupServiceImpl implements UserGroupService {
     public UserGroupDTO create(UserGroupDTO dto) {
         validateDuplicateGroup(dto.getGroupName());
 
+        ProjectModel project = fetchProject(dto.getProject());
+
         UserGroupModel model = UserGroupModel.builder()
                 .groupName(dto.getGroupName())
                 .description(dto.getDescription())
+                .project(project)
                 .build();
 
         userGroupRepository.save(model);
         return toDTO(model);
     }
-
 
     @Override
     @Transactional
@@ -42,6 +48,11 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         model.setGroupName(dto.getGroupName());
         model.setDescription(dto.getDescription());
+
+        if (dto.getProject() != null && dto.getProject().getId() != null) {
+            ProjectModel project = fetchProject(dto.getProject());
+            model.setProject(project);
+        }
 
         userGroupRepository.save(model);
         return toDTO(model);
@@ -53,7 +64,6 @@ public class UserGroupServiceImpl implements UserGroupService {
         UserGroupModel model = findGroupById(id);
         userGroupRepository.delete(model);
     }
-
 
     @Override
     @Transactional(readOnly = true)
@@ -73,6 +83,15 @@ public class UserGroupServiceImpl implements UserGroupService {
         if (userGroupRepository.existsByGroupNameIgnoreCase(groupName)) {
             throw new HltCustomerException(ErrorCode.DUPLICATE_GROUP_NAME);
         }
+    }
+
+    private ProjectModel fetchProject(ProjectDTO projectDTO) {
+        if (projectDTO == null || projectDTO.getId() == null) {
+            throw new HltCustomerException(ErrorCode.INVALID_PROJECT_REFERENCE);
+        }
+
+        return projectRepository.findById(projectDTO.getId())
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.PROJECT_NOT_FOUND));
     }
 
     private UserGroupModel findGroupById(Long id) {

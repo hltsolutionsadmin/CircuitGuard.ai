@@ -30,7 +30,11 @@ public enum ErrorCode {
     // ===========================
     // Address & App Info (1900–1999)
     // ===========================
+    USER_CREATION_FAILED(1006, "Failed to register user ,use new userdetails", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_PROJECT_REFERENCE(1051, "Invalid project reference", HttpStatus.BAD_REQUEST),
     USER_ALREADY_REGISTERED(1005, "User is already registered for this target", HttpStatus.CONFLICT),
+    ORGANIZATION_NOT_FOUND(1003, "Organization not found", HttpStatus.NOT_FOUND),
+
 
     GROUP_NOT_FOUND(2001, "User group not found", HttpStatus.NOT_FOUND),
     DUPLICATE_GROUP_NAME(2002, "User group name already exists", HttpStatus.BAD_REQUEST),

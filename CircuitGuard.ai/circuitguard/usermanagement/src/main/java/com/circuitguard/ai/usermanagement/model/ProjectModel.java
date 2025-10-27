@@ -92,4 +92,7 @@ public class ProjectModel extends GenericModel {
 
     @Column(name = "ARCHIVED", nullable = false)
     private Boolean archived = false;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserGroupModel> userGroups = new ArrayList<>();
 }

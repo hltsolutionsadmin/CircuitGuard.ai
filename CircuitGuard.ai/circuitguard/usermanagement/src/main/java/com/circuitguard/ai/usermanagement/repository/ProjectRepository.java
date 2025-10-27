@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.repository;
 
 import com.circuitguard.ai.usermanagement.model.ProjectModel;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<ProjectModel, Long> {
@@ -33,4 +35,6 @@ public interface ProjectRepository extends JpaRepository<ProjectModel, Long> {
 
     @Query("SELECT p FROM ProjectModel p WHERE p.ownerOrganization.id = :orgId OR p.clientOrganization.id = :orgId")
     Page<ProjectModel> findByOrganization(@Param("orgId") Long organizationId, Pageable pageable);
+
+    Optional<ProjectModel> findById( Long targetId);
 }

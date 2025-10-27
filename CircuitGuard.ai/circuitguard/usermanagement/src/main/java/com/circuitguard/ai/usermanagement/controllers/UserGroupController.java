@@ -14,38 +14,38 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserGroupController {
 
-    private final UserGroupService service;
+    private final UserGroupService userGroupService;
 
     @PostMapping
     public StandardResponse<UserGroupDTO> create(@Valid @RequestBody UserGroupDTO dto) {
-        UserGroupDTO createdGroup = service.create(dto);
+        UserGroupDTO createdGroup = userGroupService.create(dto);
         return StandardResponse.single("User group created successfully", createdGroup);
     }
 
 
     @PutMapping("/{id}")
     public StandardResponse<UserGroupDTO> update(@PathVariable Long id, @Valid @RequestBody UserGroupDTO dto) {
-        UserGroupDTO updatedGroup = service.update(id, dto);
+        UserGroupDTO updatedGroup = userGroupService.update(id, dto);
         return StandardResponse.single("User group updated successfully", updatedGroup);
     }
 
     @DeleteMapping("/{id}")
     public StandardResponse<String> delete(@PathVariable Long id) {
-        service.delete(id);
+        userGroupService.delete(id);
         return StandardResponse.message("User group deleted successfully");
     }
 
 
     @GetMapping
     public StandardResponse<Page<UserGroupDTO>> getAll(Pageable pageable) {
-        Page<UserGroupDTO> groups = service.getAll(pageable);
+        Page<UserGroupDTO> groups = userGroupService.getAll(pageable);
         return StandardResponse.page("User groups fetched successfully", groups);
     }
 
 
     @GetMapping("/{id}")
     public StandardResponse<UserGroupDTO> getById(@PathVariable Long id) {
-        UserGroupDTO group = service.getById(id);
+        UserGroupDTO group = userGroupService.getById(id);
         return StandardResponse.single("User group fetched successfully", group);
     }
 }

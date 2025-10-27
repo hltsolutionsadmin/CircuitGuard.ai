@@ -1,6 +1,8 @@
 package com.circuitguard.ai.usermanagement.populator;
 
+import com.circuitguard.ai.usermanagement.dto.ProjectDTO;
 import com.circuitguard.ai.usermanagement.dto.UserGroupDTO;
+import com.circuitguard.ai.usermanagement.model.ProjectModel;
 import com.circuitguard.ai.usermanagement.model.UserGroupModel;
 import com.circuitguard.utils.Populator;
 import org.springframework.stereotype.Component;
@@ -15,5 +17,14 @@ public class UserGroupPopulator implements Populator<UserGroupModel, UserGroupDT
         target.setId(source.getId());
         target.setGroupName(source.getGroupName());
         target.setDescription(source.getDescription());
+        if (source.getProject() != null) {
+            ProjectModel project = source.getProject();
+            ProjectDTO projectDTO = ProjectDTO.builder()
+                    .id(project.getId())
+                    .name(project.getName())
+                    .description(project.getDescription())
+                    .build();
+            target.setProject(projectDTO);
+        }
     }
 }
