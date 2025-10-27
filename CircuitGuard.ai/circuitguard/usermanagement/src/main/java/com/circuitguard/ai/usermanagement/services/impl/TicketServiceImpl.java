@@ -104,7 +104,7 @@ public class TicketServiceImpl implements TicketService {
             model.setDescription(dto.getDescription());
 
         model.setStatus(dto.getStatus() != null ? dto.getStatus() : model.getStatus() != null ? model.getStatus() : TicketStatus.OPEN);
-        model.setPriority(dto.getPriority() != null ? dto.getPriority() : model.getPriority() != null ? model.getPriority() : TicketPriority.MEDIUM);
+        model.setPriority(dto.getPriority() != null ? dto.getPriority() : model.getPriority() != null ? model.getPriority() : TicketPriority.LOW);
         model.setDueDate(dto.getDueDate() != null ? dto.getDueDate() : model.getDueDate());
         model.setArchived(dto.getArchived() != null ? dto.getArchived() : model.getArchived() != null ? model.getArchived() : false);
 

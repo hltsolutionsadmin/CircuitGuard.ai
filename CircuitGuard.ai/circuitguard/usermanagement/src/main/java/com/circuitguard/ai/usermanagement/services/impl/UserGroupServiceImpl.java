@@ -6,6 +6,7 @@ import com.circuitguard.ai.usermanagement.model.ProjectModel;
 import com.circuitguard.ai.usermanagement.model.UserGroupModel;
 import com.circuitguard.ai.usermanagement.populator.UserGroupPopulator;
 import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
+import com.circuitguard.ai.usermanagement.repository.UserAssignmentRepository;
 import com.circuitguard.ai.usermanagement.repository.UserGroupRepository;
 import com.circuitguard.ai.usermanagement.services.UserGroupService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
@@ -23,6 +24,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     private final UserGroupRepository userGroupRepository;
     private final ProjectRepository projectRepository;
     private final UserGroupPopulator userGroupPopulator;
+    private final UserAssignmentRepository userAssignmentRepository;
 
     @Override
     @Transactional
@@ -62,6 +64,7 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Transactional
     public void delete(Long id) {
         UserGroupModel model = findGroupById(id);
+        userAssignmentRepository.deleteByUserGroupId(id);
         userGroupRepository.delete(model);
     }
 
