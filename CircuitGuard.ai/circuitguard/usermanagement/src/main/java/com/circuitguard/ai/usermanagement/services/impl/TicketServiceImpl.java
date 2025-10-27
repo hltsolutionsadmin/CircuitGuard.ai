@@ -96,18 +96,23 @@ public class TicketServiceImpl implements TicketService {
 
 
     private TicketModel mapDtoToModel(TicketDTO dto, TicketModel model) {
-        model.setTitle(dto.getTitle());
-        model.setDescription(dto.getDescription());
-        model.setStatus(dto.getStatus() != null ? dto.getStatus() : TicketStatus.OPEN);
-        model.setPriority(dto.getPriority() != null ? dto.getPriority() : TicketPriority.MEDIUM);
-        model.setDueDate(dto.getDueDate());
-        model.setArchived(dto.getArchived() != null ? dto.getArchived() : false);
+
+        if (dto.getTitle() != null)
+            model.setTitle(dto.getTitle());
+
+        if (dto.getDescription() != null)
+            model.setDescription(dto.getDescription());
+
+        model.setStatus(dto.getStatus() != null ? dto.getStatus() : model.getStatus() != null ? model.getStatus() : TicketStatus.OPEN);
+        model.setPriority(dto.getPriority() != null ? dto.getPriority() : model.getPriority() != null ? model.getPriority() : TicketPriority.MEDIUM);
+        model.setDueDate(dto.getDueDate() != null ? dto.getDueDate() : model.getDueDate());
+        model.setArchived(dto.getArchived() != null ? dto.getArchived() : model.getArchived() != null ? model.getArchived() : false);
 
         if (dto.getProjectId() != null) {
             ProjectModel project = projectRepository.findById(dto.getProjectId())
                     .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND));
             model.setProject(project);
-        } else {
+        } else if (model.getProject() == null) {
             throw new HltCustomerException(ErrorCode.BUSINESS_VALIDATION_FAILED, "Project ID is required");
         }
 
@@ -125,6 +130,7 @@ public class TicketServiceImpl implements TicketService {
 
         return model;
     }
+
 
     private Page<TicketModel> fetchTicketsWithFilters(Pageable pageable, Long projectId, String statusStr, String priorityStr) {
         TicketStatus status = null;
