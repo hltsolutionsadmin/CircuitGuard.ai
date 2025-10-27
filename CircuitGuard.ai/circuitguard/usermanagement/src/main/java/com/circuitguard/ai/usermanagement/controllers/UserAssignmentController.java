@@ -1,6 +1,7 @@
 package com.circuitguard.ai.usermanagement.controllers;
 
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
+import com.circuitguard.ai.usermanagement.dto.UserDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.services.UserAssignmentService;
 import com.circuitguard.commonservice.dto.StandardResponse;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/assignments")
@@ -81,4 +84,18 @@ public class UserAssignmentController {
         userAssignmentService.removeAssignment(id);
         return ResponseEntity.ok(StandardResponse.message("User assignment removed successfully"));
     }
+
+    @GetMapping("/{groupId}/users")
+    public ResponseEntity<StandardResponse<Page<UserDTO>>> getUsersByGroup(
+            @PathVariable Long groupId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<UserDTO> result = userAssignmentService.getUsersByGroup(groupId, pageable);
+        return ResponseEntity.ok(StandardResponse.page("Users fetched successfully", result));
+    }
+
 }

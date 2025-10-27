@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.repository;
 
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.model.UserAssignmentModel;
+import com.circuitguard.ai.usermanagement.model.UserModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +31,15 @@ public interface UserAssignmentRepository extends JpaRepository<UserAssignmentMo
     @Transactional
     @Query(value = "DELETE FROM USER_ASSIGNMENT_GROUPS WHERE USER_GROUP_ID = :groupId", nativeQuery = true)
     void deleteByUserGroupId(@Param("groupId") Long groupId);
+
+
+    @Query("""
+    SELECT ua.user
+    FROM UserAssignmentModel ua
+    JOIN ua.groups g
+    WHERE g.id = :groupId
+      AND ua.active = true
+""")
+    Page<UserModel> findUsersByGroupId(@Param("groupId") Long groupId, Pageable pageable);
+
 }

@@ -1,9 +1,11 @@
 package com.circuitguard.ai.usermanagement.services.impl;
 
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
+import com.circuitguard.ai.usermanagement.dto.UserDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.model.*;
 import com.circuitguard.ai.usermanagement.populator.UserAssignmentPopulator;
+import com.circuitguard.ai.usermanagement.populator.UserPopulator;
 import com.circuitguard.ai.usermanagement.repository.OrganizationRepository;
 import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
 import com.circuitguard.ai.usermanagement.repository.UserAssignmentRepository;
@@ -36,6 +38,7 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
     private final ProjectRepository projectRepository;
     private final RoleServiceImpl roleService;
     private final UserServiceImpl userService;
+    private final UserPopulator userPopulator;
 
     @Override
     public UserAssignmentDTO assignUserToTarget(UserAssignmentDTO dto) {
@@ -182,4 +185,17 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
             return dto;
         });
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserDTO> getUsersByGroup(Long groupId, Pageable pageable) {
+        Page<UserModel> userPage = userAssignmentRepository.findUsersByGroupId(groupId, pageable);
+
+        if (userPage.isEmpty()) {
+            throw new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND, "No users found for the given group");
+        }
+
+        return userPage.map(user -> userPopulator.toDTO(user));
+    }
+
 }
