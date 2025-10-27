@@ -42,8 +42,11 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public TicketDTO createTicket(TicketDTO ticketDTO) {
-        TicketModel model = mapDtoToModel(ticketDTO, new TicketModel());
-        TicketModel saved = ticketRepository.save(model);
+        TicketModel ticketModel = mapDtoToModel(ticketDTO, new TicketModel());
+        if (ticketModel.getTicketId() == null) {
+            ticketModel.setTicketId(generateTicketId(ticketModel.getProject()));
+        }
+        TicketModel saved = ticketRepository.save(ticketModel);
         return ticketPopulator.toDTO(saved);
     }
 
@@ -129,6 +132,12 @@ public class TicketServiceImpl implements TicketService {
         }
 
         return model;
+    }
+
+    private String generateTicketId(ProjectModel project) {
+        Long count = ticketRepository.countByProject(project);
+        long nextSequence = (count != null ? count + 1 : 1);
+        return project.getProjectCode().toUpperCase() + "-" + nextSequence;
     }
 
 

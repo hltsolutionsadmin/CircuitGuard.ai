@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.services.impl;
 
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
 import com.circuitguard.ai.usermanagement.dto.UserDTO;
+import com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.model.*;
 import com.circuitguard.ai.usermanagement.populator.UserAssignmentPopulator;
@@ -22,9 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -41,12 +40,15 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
     private final UserPopulator userPopulator;
 
     @Override
-    public UserAssignmentDTO assignUserToTarget(UserAssignmentDTO dto) {
+    @Transactional
+    public List<UserAssignmentDTO> assignUserToTarget(UserAssignmentDTO dto) {
         validateAssignmentRequest(dto);
+
         return (dto.getTargetType() == AssignmentTargetType.ORGANIZATION)
-                ? handleOrganizationAssignment(dto)
+                ? List.of(handleOrganizationAssignment(dto))
                 : handleTargetAssignment(dto);
     }
+
     private UserAssignmentDTO handleOrganizationAssignment(UserAssignmentDTO dto) {
         UserModel user = registerNewAdmin(dto);
 
@@ -54,39 +56,54 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
                 .orElseThrow(() -> new HltCustomerException(ErrorCode.ORGANIZATION_NOT_FOUND));
 
         UserAssignmentModel assignment = buildAssignment(user, dto, organization.getId(), AssignmentTargetType.ORGANIZATION);
+        assignment.setRole(dto.getRole()); // single role for org admin
         assignment = userAssignmentRepository.save(assignment);
 
         return convertToDTO(assignment);
     }
 
-    private UserAssignmentDTO handleTargetAssignment(UserAssignmentDTO dto) {
-        if (dto.getUserId() == null) {
+    @Transactional
+    private List<UserAssignmentDTO> handleTargetAssignment(UserAssignmentDTO dto) {
+        if (dto.getUserIds() == null || dto.getUserIds().isEmpty()) {
             throw new HltCustomerException(ErrorCode.USER_NOT_FOUND);
         }
-        UserModel user = Optional.ofNullable(userService.findById(dto.getUserId()))
-                .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
 
         ProjectModel project = projectRepository.findById(dto.getTargetId())
                 .orElseThrow(() -> new HltCustomerException(ErrorCode.PROJECT_NOT_FOUND));
 
-        // Check existing assignment
-        userAssignmentRepository.findByUser_IdAndTargetTypeAndTargetId(dto.getUserId(), dto.getTargetType(), dto.getTargetId())
-                .ifPresent(existing -> {
-                    throw new HltCustomerException(ErrorCode.USER_ALREADY_REGISTERED);
-                });
+        List<UserAssignmentDTO> responseList = new ArrayList<>();
 
-        UserAssignmentModel assignment = buildAssignment(user, dto, project.getId(), dto.getTargetType());
+        for (Long userId : dto.getUserIds()) {
+            UserModel user = Optional.ofNullable(userService.findById(userId))
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
 
-        // Add group mapping if present
-        if (dto.getGroupIds() != null && !dto.getGroupIds().isEmpty()) {
-            Set<UserGroupModel> groups = new HashSet<>(userGroupRepository.findAllById(dto.getGroupIds()));
-            assignment.setGroups(groups);
+            userAssignmentRepository.findByUser_IdAndTargetTypeAndTargetId(userId, dto.getTargetType(), dto.getTargetId())
+                    .ifPresent(existing -> {
+                        throw new HltCustomerException(ErrorCode.USER_ALREADY_REGISTERED);
+                    });
+
+            List<AssignmentRole> rolesToAssign =
+                    (dto.getRoles() != null && !dto.getRoles().isEmpty())
+                            ? dto.getRoles()
+                            : List.of(dto.getRole());
+            for (AssignmentRole role : rolesToAssign) {
+                UserAssignmentModel assignment = buildAssignment(user, dto, project.getId(), dto.getTargetType());
+                assignment.setRole(role);
+
+                if (dto.getGroupIds() != null && !dto.getGroupIds().isEmpty()) {
+                    Set<UserGroupModel> groups = new HashSet<>(userGroupRepository.findAllById(dto.getGroupIds()));
+                    assignment.setGroups(groups);
+                }
+
+                UserAssignmentModel saved = userAssignmentRepository.save(assignment);
+                UserAssignmentDTO responseDTO = new UserAssignmentDTO();
+                userAssignmentPopulator.populate(saved, responseDTO);
+                responseList.add(responseDTO);
+            }
         }
 
-        assignment = userAssignmentRepository.save(assignment);
-        return convertToDTO(assignment);
+        return responseList;
     }
-
 
     private void validateAssignmentRequest(UserAssignmentDTO dto) {
         if (dto.getTargetType() == null || dto.getTargetId() == null) {
@@ -99,7 +116,6 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
         assignment.setUser(user);
         assignment.setTargetType(type);
         assignment.setTargetId(targetId);
-        assignment.setRole(dto.getRole());
         assignment.setActive(Optional.ofNullable(dto.getActive()).orElse(true));
         return assignment;
     }
@@ -109,6 +125,7 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
         userAssignmentPopulator.populate(assignment, responseDTO);
         return responseDTO;
     }
+
 
     private UserModel registerNewAdmin(UserAssignmentDTO userAssignmentDTO) {
         UserModel user = new UserModel();

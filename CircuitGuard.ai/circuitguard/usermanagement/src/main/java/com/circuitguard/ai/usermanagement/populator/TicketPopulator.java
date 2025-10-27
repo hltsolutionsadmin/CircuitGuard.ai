@@ -25,6 +25,7 @@ public class TicketPopulator implements Populator<TicketModel, TicketDTO> {
         }
 
         target.setId(source.getId());
+        target.setTicketId(source.getTicketId());
         target.setTitle(source.getTitle());
         target.setDescription(source.getDescription());
         target.setPriority(source.getPriority());

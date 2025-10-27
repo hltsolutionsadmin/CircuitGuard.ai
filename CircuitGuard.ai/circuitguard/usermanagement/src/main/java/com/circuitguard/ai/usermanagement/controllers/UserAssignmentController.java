@@ -22,12 +22,10 @@ public class UserAssignmentController {
     public UserAssignmentController(UserAssignmentService userAssignmentService) {
         this.userAssignmentService = userAssignmentService;
     }
-
-
     @PostMapping
-    public ResponseEntity<StandardResponse<UserAssignmentDTO>> assignUser(@RequestBody UserAssignmentDTO dto) {
-        UserAssignmentDTO saved = userAssignmentService.assignUserToTarget(dto);
-        return ResponseEntity.ok(StandardResponse.single("User assignment saved successfully", saved));
+    public ResponseEntity<StandardResponse<List<UserAssignmentDTO>>> assignUser(@RequestBody UserAssignmentDTO dto) {
+        List<UserAssignmentDTO> savedList = userAssignmentService.assignUserToTarget(dto);
+        return ResponseEntity.ok(StandardResponse.list("User assignment(s) saved successfully", savedList));
     }
 
     @GetMapping("/{id}")

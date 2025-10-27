@@ -5,6 +5,7 @@ import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -16,13 +17,17 @@ public class UserAssignmentDTO {
     private Long id;
 
     @NotNull(message = "User ID is required")
-    private Long userId;
+    private List<Long> userId;
+    private List<Long> userIds;
+
 
     @NotNull(message = "Target type is required")
     private AssignmentTargetType targetType;
 
-    @NotNull(message = "Role cannot be null")
     private AssignmentRole role;
+
+    @NotNull(message = "Role cannot be null")
+    private List<AssignmentRole> roles;
 
     @NotNull(message = "Target ID is required")
     private Long targetId;
