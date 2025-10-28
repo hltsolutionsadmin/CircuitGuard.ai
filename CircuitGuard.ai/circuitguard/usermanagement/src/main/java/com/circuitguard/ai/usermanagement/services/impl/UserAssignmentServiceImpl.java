@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.services.impl;
 
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
 import com.circuitguard.ai.usermanagement.dto.UserDTO;
+import com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.model.*;
 import com.circuitguard.ai.usermanagement.populator.UserAssignmentPopulator;
@@ -72,7 +73,22 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
 
         List<UserAssignmentDTO> responseList = new ArrayList<>();
 
-        for (Long userId : dto.getUserIds()) {
+        if (dto.getUserIds() == null || dto.getUserIds().isEmpty()) {
+            throw new HltCustomerException(ErrorCode.USER_REQUIRED);
+        }
+
+        if (dto.getRoles() == null || dto.getRoles().isEmpty()) {
+            throw new HltCustomerException(ErrorCode.ROLES_REQUIRED);
+        }
+
+        if (dto.getUserIds().size() != dto.getRoles().size()) {
+            throw new HltCustomerException(ErrorCode.USER_ROLE_MISMATCH);
+        }
+
+        for (int i = 0; i < dto.getUserIds().size(); i++) {
+            Long userId = dto.getUserIds().get(i);
+            AssignmentRole role = dto.getRoles().get(i);
+
             UserModel user = Optional.ofNullable(userService.findById(userId))
                     .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
 
@@ -81,13 +97,9 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
                         throw new HltCustomerException(ErrorCode.USER_ALREADY_REGISTERED);
                     });
 
-            if (dto.getRoles() == null || dto.getRoles().isEmpty()) {
-                throw new HltCustomerException(ErrorCode.ROLES_REQUIRED);
-            }
-
-            // Create one assignment entry with all roles
+            // Build new assignment per user-role mapping
             UserAssignmentModel assignment = buildAssignment(user, dto, project.getId(), dto.getTargetType());
-            assignment.setRoles(new HashSet<>(dto.getRoles()));
+            assignment.setRoles(Set.of(role));
 
             if (dto.getGroupIds() != null && !dto.getGroupIds().isEmpty()) {
                 Set<UserGroupModel> groups = validateAndFetchGroups(dto.getGroupIds());
@@ -103,6 +115,7 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
 
         return responseList;
     }
+
 
     private void validateAssignmentRequest(UserAssignmentDTO dto) {
         if (dto.getTargetType() == null || dto.getTargetId() == null) {

@@ -28,6 +28,9 @@ public enum ErrorCode {
     AZURE_BLOB_UPLOAD_FAILED(4001, "Failed to upload file to Azure Blob Storage", HttpStatus.INTERNAL_SERVER_ERROR),
     USER_IDS_REQUIRED(1002, "User IDs are required", HttpStatus.BAD_REQUEST),
     ROLES_REQUIRED(1003, "At least one role must be provided", HttpStatus.BAD_REQUEST),
+    USER_REQUIRED(1010, "At least one user is required", HttpStatus.BAD_REQUEST),
+    USER_ROLE_MISMATCH(1011, "User count and role count must match", HttpStatus.BAD_REQUEST),
+
     // ===========================
     // Address & App Info (1900–1999)
     // ===========================
