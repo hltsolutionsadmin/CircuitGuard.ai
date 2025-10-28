@@ -30,7 +30,10 @@ public class UserGroupPopulator implements Populator<UserGroupModel, UserGroupDT
 
         if (source.getProject() != null) {
             ProjectDTO projectDTO = new ProjectDTO();
+
             projectPopulator.populate(source.getProject(), projectDTO);
+//            projectDTO.setId(source.getProject().getId());
+//            projectDTO.setName(source.getProject().getName());
             target.setProject(projectDTO);
         }
 

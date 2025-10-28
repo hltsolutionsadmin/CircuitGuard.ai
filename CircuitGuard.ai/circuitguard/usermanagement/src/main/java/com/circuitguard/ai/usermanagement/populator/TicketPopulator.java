@@ -6,7 +6,6 @@ import com.circuitguard.ai.usermanagement.dto.TicketDTO;
 import com.circuitguard.ai.usermanagement.dto.UserGroupDTO;
 import com.circuitguard.ai.usermanagement.model.TicketModel;
 import com.circuitguard.utils.Populator;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -61,7 +60,6 @@ public class TicketPopulator implements Populator<TicketModel, TicketDTO> {
 //            target.setAssignedToName(source.getAssignedTo().getFullName());
         }
 
-        // Map comments
         if (source.getComments() != null) {
             target.setComments(
                     source.getComments().stream()

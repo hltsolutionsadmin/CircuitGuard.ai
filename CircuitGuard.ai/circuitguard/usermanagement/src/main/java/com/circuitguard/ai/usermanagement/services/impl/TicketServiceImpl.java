@@ -137,11 +137,6 @@ public class TicketServiceImpl implements TicketService {
         return model;
     }
 
-    private String generateTicketId(ProjectModel project) {
-        Long count = ticketRepository.countByProject(project);
-        long nextSequence = (count != null ? count + 1 : 1);
-        return project.getProjectCode().toUpperCase() + "-" + nextSequence;
-    }
 
 
     private Page<TicketModel> fetchTicketsWithFilters(Pageable pageable, Long projectId, String statusStr, String priorityStr) {

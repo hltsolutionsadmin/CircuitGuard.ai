@@ -15,4 +15,6 @@ public interface UserGroupService {
     Page<UserGroupDTO> getAll(Pageable pageable);
 
     UserGroupDTO getById(Long id);
+
+    Page<UserGroupDTO> getGroupsByProjectId(Long projectId, Pageable pageable);
 }

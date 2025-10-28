@@ -42,6 +42,14 @@ public class UserGroupController {
         return StandardResponse.page("User groups fetched successfully", groups);
     }
 
+    @GetMapping("/project/{projectId}")
+    public StandardResponse<Page<UserGroupDTO>> getGroupsByProjectId(
+            @PathVariable Long projectId,
+            Pageable pageable) {
+
+        Page<UserGroupDTO> groups = userGroupService.getGroupsByProjectId(projectId, pageable);
+        return StandardResponse.page("User groups fetched successfully", groups);
+    }
 
     @GetMapping("/{id}")
     public StandardResponse<UserGroupDTO> getById(@PathVariable Long id) {

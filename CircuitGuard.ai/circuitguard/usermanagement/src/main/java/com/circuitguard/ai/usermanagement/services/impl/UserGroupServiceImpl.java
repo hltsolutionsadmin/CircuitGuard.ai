@@ -100,6 +100,15 @@ public class UserGroupServiceImpl implements UserGroupService {
         return userGroupPopulator.toDTO(findGroupById(id));
     }
 
+    @Transactional(readOnly = true)
+    public Page<UserGroupDTO> getGroupsByProjectId(Long projectId, Pageable pageable) {
+        ProjectModel project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.PROJECT_NOT_FOUND));
+
+        return userGroupRepository.findByProjectId(project.getId(), pageable)
+                .map(userGroupPopulator::toDTO);
+    }
+
 
     private void validateDuplicateGroup(String groupName) {
         if (userGroupRepository.existsByGroupNameIgnoreCase(groupName)) {
