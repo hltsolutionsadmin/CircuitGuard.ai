@@ -26,7 +26,8 @@ public enum ErrorCode {
     OTP_EXPIRED(1801, "OTP Expired", HttpStatus.BAD_REQUEST),
     TOKEN_PROCESSING_ERROR(1804, "Error Processing Refresh Token", HttpStatus.INTERNAL_SERVER_ERROR),
     AZURE_BLOB_UPLOAD_FAILED(4001, "Failed to upload file to Azure Blob Storage", HttpStatus.INTERNAL_SERVER_ERROR),
-
+    USER_IDS_REQUIRED(1002, "User IDs are required", HttpStatus.BAD_REQUEST),
+    ROLES_REQUIRED(1003, "At least one role must be provided", HttpStatus.BAD_REQUEST),
     // ===========================
     // Address & App Info (1900–1999)
     // ===========================

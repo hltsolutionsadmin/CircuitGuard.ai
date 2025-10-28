@@ -17,7 +17,6 @@ import com.circuitguard.ai.usermanagement.repository.UserRepository;
 import com.circuitguard.ai.usermanagement.services.TicketService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
-import com.circuitguard.commonservice.user.UserDetailsImpl;
 import com.circuitguard.utils.SecurityUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -42,9 +42,14 @@ public class UserAssignmentModel extends GenericModel {
     @Column(name = "IS_ACTIVE", nullable = false)
     private Boolean active = true;
 
+    @ElementCollection(targetClass = AssignmentRole.class, fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "USER_ASSIGNMENT_ROLES",
+            joinColumns = @JoinColumn(name = "USER_ASSIGNMENT_ID")
+    )
     @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", nullable = false)
-    private AssignmentRole role;
+    private Set<AssignmentRole> roles = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

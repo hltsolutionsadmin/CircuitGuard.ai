@@ -2,13 +2,14 @@ package com.circuitguard.ai.usermanagement.populator;
 
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
 import com.circuitguard.ai.usermanagement.model.UserAssignmentModel;
+import com.circuitguard.ai.usermanagement.model.UserGroupModel;
 import com.circuitguard.utils.Populator;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 @Component
 public class UserAssignmentPopulator implements Populator<UserAssignmentModel, UserAssignmentDTO> {
 
@@ -18,17 +19,16 @@ public class UserAssignmentPopulator implements Populator<UserAssignmentModel, U
             return;
         }
 
-        // Basic fields
-        target.setId(source.getId());
         target.setTargetType(source.getTargetType());
         target.setTargetId(source.getTargetId());
-        target.setRole(source.getRole());
         target.setActive(source.getActive());
 
-        // User info
-        if (source.getUser() != null) {
-                target.setUserIds(List.of(source.getUser().getId()));
+        if (source.getRoles() != null && !source.getRoles().isEmpty()) {
+            target.setRoles(source.getRoles().stream().toList());
+        }
 
+        if (source.getUser() != null) {
+            target.setUserIds(List.of(source.getUser().getId()));
             target.setUsername(source.getUser().getUsername());
             target.setFullName(source.getUser().getFullName());
             target.setPrimaryContact(source.getUser().getPrimaryContact());
@@ -36,15 +36,12 @@ public class UserAssignmentPopulator implements Populator<UserAssignmentModel, U
         }
 
         if (source.getGroups() != null && !source.getGroups().isEmpty()) {
-            Set<Long> groupIds = source.getGroups()
-                    .stream()
-                    .filter(g -> g != null && g.getId() != null)
-                    .map(g -> g.getId())
-                    .collect(Collectors.toSet());
-            target.setGroupIds(groupIds);
-        } else {
-            target.setGroupIds(null);
+            target.setGroupIds(
+                    source.getGroups().stream()
+                            .filter(g -> g != null && g.getId() != null)
+                            .map(UserGroupModel::getId)
+                            .toList()
+            );
         }
-
     }
 }
