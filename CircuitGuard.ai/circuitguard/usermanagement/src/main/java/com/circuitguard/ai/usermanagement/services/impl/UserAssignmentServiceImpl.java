@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -89,7 +90,7 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
             assignment.setRoles(new HashSet<>(dto.getRoles()));
 
             if (dto.getGroupIds() != null && !dto.getGroupIds().isEmpty()) {
-                Set<UserGroupModel> groups = new HashSet<>(userGroupRepository.findAllById(dto.getGroupIds()));
+                Set<UserGroupModel> groups = validateAndFetchGroups(dto.getGroupIds());
                 assignment.setGroups(groups);
             }
 
@@ -107,11 +108,32 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
         if (dto.getTargetType() == null || dto.getTargetId() == null) {
             throw new HltCustomerException(ErrorCode.INVALID_ASSIGNMENT_REQUEST);
         }
-
-        if (dto.getUserIds() == null || dto.getUserIds().isEmpty()) {
-            throw new HltCustomerException(ErrorCode.USER_IDS_REQUIRED);
+        if (dto.getTargetType() != AssignmentTargetType.ORGANIZATION) {
+            if (dto.getUserIds() == null || dto.getUserIds().isEmpty()) {
+                throw new HltCustomerException(ErrorCode.USER_IDS_REQUIRED);
+            }
         }
     }
+
+    private Set<UserGroupModel> validateAndFetchGroups(List<Long> groupIds) {
+        if (groupIds == null || groupIds.isEmpty()) {
+            return Collections.emptySet();
+        }
+
+        Set<Long> inputIds = new HashSet<>(groupIds);
+        List<UserGroupModel> groups = userGroupRepository.findAllById(inputIds);
+
+        if (groups.size() != inputIds.size()) {
+            Set<Long> foundIds = groups.stream().map(UserGroupModel::getId).collect(Collectors.toSet());
+
+            Set<Long> missingIds = inputIds.stream().filter(id -> !foundIds.contains(id)).collect(Collectors.toSet());
+
+            throw new HltCustomerException(ErrorCode.GROUP_NOT_FOUND, "Group(s) not found for ID(s): " + missingIds);
+        }
+
+        return new HashSet<>(groups);
+    }
+
 
     private UserAssignmentModel buildAssignment(UserModel user, UserAssignmentDTO dto, Long targetId, AssignmentTargetType type) {
         UserAssignmentModel assignment = new UserAssignmentModel();
