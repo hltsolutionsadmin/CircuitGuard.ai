@@ -24,5 +24,10 @@ public class UserGroupModel extends GenericModel {
     @JoinColumn(name = "PROJECT_ID")
     private ProjectModel project;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "GROUP_LEAD_ID")
+    private UserModel groupLead;
+
+
 
 }

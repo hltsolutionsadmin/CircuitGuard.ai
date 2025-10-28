@@ -4,7 +4,6 @@ import com.circuitguard.ai.usermanagement.dto.enums.TicketPriority;
 import com.circuitguard.ai.usermanagement.dto.enums.TicketStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +20,7 @@ public class TicketDTO {
 
     private Long id;
 
-  
+
     private String ticketId;
 
 
@@ -50,4 +49,7 @@ public class TicketDTO {
     private Boolean archived = false;
 
     private List<TicketCommentDTO> comments;
+
+    private UserGroupDTO userGroupDTO;
+
 }

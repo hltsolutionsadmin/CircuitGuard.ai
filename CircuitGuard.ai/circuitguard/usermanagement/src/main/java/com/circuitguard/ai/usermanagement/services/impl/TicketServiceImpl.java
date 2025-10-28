@@ -4,16 +4,10 @@ import com.circuitguard.ai.usermanagement.dto.TicketCommentDTO;
 import com.circuitguard.ai.usermanagement.dto.TicketDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.TicketPriority;
 import com.circuitguard.ai.usermanagement.dto.enums.TicketStatus;
-import com.circuitguard.ai.usermanagement.model.ProjectModel;
-import com.circuitguard.ai.usermanagement.model.TicketCommentModel;
-import com.circuitguard.ai.usermanagement.model.TicketModel;
-import com.circuitguard.ai.usermanagement.model.UserModel;
+import com.circuitguard.ai.usermanagement.model.*;
 import com.circuitguard.ai.usermanagement.populator.TicketCommentPopulator;
 import com.circuitguard.ai.usermanagement.populator.TicketPopulator;
-import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
-import com.circuitguard.ai.usermanagement.repository.TicketCommentRepository;
-import com.circuitguard.ai.usermanagement.repository.TicketRepository;
-import com.circuitguard.ai.usermanagement.repository.UserRepository;
+import com.circuitguard.ai.usermanagement.repository.*;
 import com.circuitguard.ai.usermanagement.services.TicketService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
@@ -37,6 +31,7 @@ public class TicketServiceImpl implements TicketService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final TicketPopulator ticketPopulator;
+    private final UserGroupRepository userGroupRepository;
 
     private final TicketCommentRepository ticketCommentRepository;
     private final TicketCommentPopulator ticketCommentPopulator;
@@ -130,6 +125,13 @@ public class TicketServiceImpl implements TicketService {
             UserModel assignedTo = userRepository.findById(dto.getAssignedToId())
                     .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
             model.setAssignedTo(assignedTo);
+        }
+        if (dto.getUserGroupDTO() != null && dto.getUserGroupDTO().getId() != null) {
+            UserGroupModel group = userGroupRepository.findById(dto.getUserGroupDTO().getId())
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.GROUP_NOT_FOUND, "User group not found"));
+            model.setGroup(group);
+        } else {
+            model.setGroup(null);
         }
 
         return model;

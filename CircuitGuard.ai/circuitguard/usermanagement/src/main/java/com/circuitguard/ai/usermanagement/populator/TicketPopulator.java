@@ -3,8 +3,11 @@ package com.circuitguard.ai.usermanagement.populator;
 
 import com.circuitguard.ai.usermanagement.dto.TicketCommentDTO;
 import com.circuitguard.ai.usermanagement.dto.TicketDTO;
+import com.circuitguard.ai.usermanagement.dto.UserGroupDTO;
 import com.circuitguard.ai.usermanagement.model.TicketModel;
 import com.circuitguard.utils.Populator;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
@@ -13,6 +16,9 @@ import java.util.stream.Collectors;
 public class TicketPopulator implements Populator<TicketModel, TicketDTO> {
 
     private final TicketCommentPopulator commentPopulator;
+
+    @Autowired
+    private  UserGroupPopulator userGroupPopulator;
 
     public TicketPopulator(TicketCommentPopulator commentPopulator) {
         this.commentPopulator = commentPopulator;
@@ -37,6 +43,13 @@ public class TicketPopulator implements Populator<TicketModel, TicketDTO> {
         if (source.getProject() != null) {
             target.setProjectId(source.getProject().getId());
         }
+
+        if (source.getGroup() != null) {
+            UserGroupDTO groupDTO = new UserGroupDTO();
+            userGroupPopulator.populate(source.getGroup(), groupDTO);
+            target.setUserGroupDTO(groupDTO);
+        }
+
 
         if (source.getCreatedBy() != null) {
             target.setCreatedById(source.getCreatedBy().getId());

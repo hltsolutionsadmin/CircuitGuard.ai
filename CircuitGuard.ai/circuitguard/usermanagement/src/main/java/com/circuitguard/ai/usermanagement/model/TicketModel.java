@@ -62,5 +62,8 @@ public class TicketModel extends GenericModel {
     @Column(name = "IS_ARCHIVED")
     private Boolean archived = false;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "GROUP_ID")
+    private UserGroupModel group;
 
     }

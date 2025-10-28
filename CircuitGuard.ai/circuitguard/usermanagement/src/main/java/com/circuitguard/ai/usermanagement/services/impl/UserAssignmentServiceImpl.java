@@ -97,7 +97,6 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
                         throw new HltCustomerException(ErrorCode.USER_ALREADY_REGISTERED);
                     });
 
-            // Build new assignment per user-role mapping
             UserAssignmentModel assignment = buildAssignment(user, dto, project.getId(), dto.getTargetType());
             assignment.setRoles(Set.of(role));
 

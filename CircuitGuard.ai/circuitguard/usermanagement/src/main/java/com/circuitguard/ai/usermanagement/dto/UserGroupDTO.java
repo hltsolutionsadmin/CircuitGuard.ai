@@ -18,4 +18,6 @@ public class UserGroupDTO {
     private String description;
 
     private ProjectDTO project;
+
+    private UserDTO groupLead;
 }
