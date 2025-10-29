@@ -24,21 +24,18 @@ public class TicketDTO {
     private String ticketId;
 
 
-    @NotBlank(message = "Ticket title is required")
     private String title;
 
     private String description;
 
-    @NotNull(message = "Ticket priority is required")
     private TicketPriority priority;
 
-    @NotNull(message = "Ticket status is required")
     private TicketStatus status;
 
-    @NotNull(message = "Project ID is required")
     private Long projectId;
 
     private Long createdById;
+
     private String createdByName;
 
     private Long assignedToId;

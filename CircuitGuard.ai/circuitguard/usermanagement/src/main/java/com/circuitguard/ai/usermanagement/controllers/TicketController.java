@@ -19,8 +19,8 @@ public class TicketController {
     private final TicketService ticketService;
 
     @PostMapping
-    public StandardResponse<TicketDTO> createTicket(@Valid @RequestBody TicketDTO ticketDTO) {
-        TicketDTO created = ticketService.createTicket(ticketDTO);
+    public StandardResponse<TicketDTO> createTicket( @RequestBody TicketDTO ticketDTO) {
+        TicketDTO created = ticketService.createOrUpdateTicket(ticketDTO);
         return StandardResponse.single("Ticket created successfully", created);
     }
 

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface TicketService {
 
-    TicketDTO createTicket(TicketDTO ticketDTO);
+    TicketDTO createOrUpdateTicket(TicketDTO ticketDTO);
 
     TicketDTO getTicketById(Long ticketId);
 
