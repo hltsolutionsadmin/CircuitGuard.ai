@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.controllers;
 
 import com.circuitguard.ai.usermanagement.dto.TicketDTO;
 import com.circuitguard.ai.usermanagement.dto.TicketCommentDTO;
+import com.circuitguard.ai.usermanagement.dto.enums.TicketStatus;
 import com.circuitguard.ai.usermanagement.services.TicketService;
 import com.circuitguard.commonservice.dto.StandardResponse;
 import jakarta.validation.Valid;
@@ -55,5 +56,24 @@ public class TicketController {
         TicketCommentDTO added = ticketService.addComment(id, commentDTO);
         return StandardResponse.single("Comment added successfully", added);
     }
+
+
+    @PostMapping("/{ticketId}/assign/{assigneeId}")
+    public StandardResponse<TicketDTO> assignTicket(
+            @PathVariable Long ticketId,
+            @PathVariable Long assigneeId) {
+        TicketDTO updated = ticketService.assignTicket(ticketId, assigneeId);
+        return StandardResponse.single("Ticket assigned successfully", updated);
+    }
+
+    @PatchMapping("/{ticketId}/status")
+    public StandardResponse<TicketDTO> updateTicketStatus(
+            @PathVariable Long ticketId,
+            @RequestParam TicketStatus status) {
+        TicketDTO updated = ticketService.updateTicketStatus(ticketId, status);
+        return StandardResponse.single("Ticket status updated successfully", updated);
+    }
+
+
 
 }

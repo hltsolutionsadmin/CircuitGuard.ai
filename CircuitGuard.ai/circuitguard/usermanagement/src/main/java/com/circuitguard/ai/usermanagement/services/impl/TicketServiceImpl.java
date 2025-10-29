@@ -12,7 +12,7 @@ import com.circuitguard.ai.usermanagement.services.TicketService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
 import com.circuitguard.utils.SecurityUtils;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,67 +23,67 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
-@AllArgsConstructor
 public class TicketServiceImpl implements TicketService {
 
     private final TicketRepository ticketRepository;
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
-    private final TicketPopulator ticketPopulator;
     private final UserGroupRepository userGroupRepository;
-
     private final TicketCommentRepository ticketCommentRepository;
+
+    private final TicketPopulator ticketPopulator;
     private final TicketCommentPopulator ticketCommentPopulator;
+
 
     @Override
     public TicketDTO createTicket(TicketDTO ticketDTO) {
         TicketModel ticketModel = mapDtoToModel(ticketDTO, new TicketModel());
-//        if (ticketModel.getTicketId() == null) {
-//            ticketModel.setTicketId(generateTicketId(ticketModel.getProject()));
-//        }
-        TicketModel saved = ticketRepository.save(ticketModel);
-        if(saved.getPriority()==TicketPriority.HIGH){
-            autoAssignHighPriorityTicket(saved);
+
+        // Auto-assign for HIGH priority tickets if no assignee provided
+        if (ticketModel.getPriority() == TicketPriority.HIGH && ticketModel.getAssignedTo() == null) {
+            autoAssignHighPriorityTicket(ticketModel);
         }
+
+        TicketModel saved = ticketRepository.save(ticketModel);
         return ticketPopulator.toDTO(saved);
     }
 
     @Override
     public TicketDTO getTicketById(Long ticketId) {
         TicketModel model = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND));
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.TICKET_NOT_FOUND));
         return ticketPopulator.toDTO(model);
     }
 
     @Override
     public Page<TicketDTO> getAllTickets(Pageable pageable, Long projectId, String statusStr, String priorityStr) {
-        Page<TicketModel> page = fetchTicketsWithFilters(pageable, projectId, statusStr, priorityStr);
+        Page<TicketModel> tickets = fetchTicketsWithFilters(pageable, projectId, statusStr, priorityStr);
 
-        List<TicketDTO> dtos = page.getContent().stream()
+        List<TicketDTO> dtoList = tickets.getContent().stream()
                 .map(ticketPopulator::toDTO)
                 .collect(Collectors.toList());
 
-        return new PageImpl<>(dtos, pageable, page.getTotalElements());
+        return new PageImpl<>(dtoList, pageable, tickets.getTotalElements());
     }
 
     @Override
     public void deleteTicket(Long ticketId) {
-        TicketModel model = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND));
-        ticketRepository.delete(model);
+        TicketModel ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.TICKET_NOT_FOUND));
+        ticketRepository.delete(ticket);
     }
 
     @Override
     public TicketCommentDTO addComment(Long ticketId, TicketCommentDTO commentDTO) {
         TicketModel ticket = ticketRepository.findById(ticketId)
-                .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND, "Ticket not found"));
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.TICKET_NOT_FOUND));
 
-        UserModel createdBy = null;
-        if (commentDTO.getCreatedById() != null) {
-            createdBy = userRepository.findById(commentDTO.getCreatedById())
-                    .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND, "User not found"));
-        }
+        UserModel createdBy = commentDTO.getCreatedById() != null
+                ? userRepository.findById(SecurityUtils.getCurrentUserDetails().getId())
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND))
+                : null;
 
         TicketCommentModel comment = new TicketCommentModel();
         comment.setTicket(ticket);
@@ -96,108 +96,119 @@ public class TicketServiceImpl implements TicketService {
         return resultDTO;
     }
 
-    private void autoAssignHighPriorityTicket(TicketModel ticket) {
-        try {
-            UserGroupModel group = userGroupRepository
-                    .findByProjectId(ticket.getProject().getId())
-                    .orElseThrow(() -> new HltCustomerException(ErrorCode.GROUP_NOT_FOUND_FOR_PROJECT));
 
-            if (group.getGroupLead() == null) {
-                throw new HltCustomerException(ErrorCode.GROUP_LEAD_NOT_ASSIGNED);
-            }
+    @Override
+    public TicketDTO assignTicket(Long ticketId, Long assigneeId) {
+        TicketModel ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.TICKET_NOT_FOUND));
 
-            ticket.setAssignedTo(group.getGroupLead());
-            ticket.setStatus(TicketStatus.ASSIGNED);
-            ticketRepository.save(ticket);
-
-        } catch (Exception e) {
-            throw new HltCustomerException(ErrorCode.TICKET_AUTO_ASSIGNMENT_FAILED);
+        // Already assigned validation
+        if (ticket.getAssignedTo() != null && ticket.getAssignedTo().getId().equals(assigneeId)) {
+            throw new HltCustomerException(ErrorCode.TICKET_ALREADY_ASSIGNED);
         }
+
+        UserModel assignee = userRepository.findById(assigneeId)
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
+
+        // Role-based assignment check (optional)
+        // validateAssignmentPermissions(SecurityUtils.getCurrentUserDetails(), ticket);
+
+        ticket.setAssignedTo(assignee);
+        ticket.setStatus(TicketStatus.ASSIGNED);
+        return ticketPopulator.toDTO(ticketRepository.save(ticket));
     }
 
 
+    @Override
+    public TicketDTO updateTicketStatus(Long ticketId, TicketStatus status) {
+        TicketModel ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.TICKET_NOT_FOUND));
+
+//        Long currentUserId = SecurityUtils.getCurrentUserDetails().getId();
+//
+//        if (ticket.getAssignedTo() == null || !ticket.getAssignedTo().getId().equals(currentUserId)) {
+//            throw new HltCustomerException(ErrorCode.UNAUTHORIZED, "You are not allowed to update this ticket status");
+//        }
+
+        if (ticket.getStatus() == TicketStatus.CLOSED) {
+            throw new HltCustomerException(ErrorCode.TICKET_ALREADY_CLOSED, "Cannot update a closed ticket");
+        }
+
+        ticket.setStatus(status);
+        return ticketPopulator.toDTO(ticketRepository.save(ticket));
+    }
+
+    private void autoAssignHighPriorityTicket(TicketModel ticket) {
+        UserGroupModel group = userGroupRepository.findByProjectId(ticket.getProject().getId())
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.GROUP_NOT_FOUND_FOR_PROJECT));
+
+        if (group.getGroupLead() == null) {
+            throw new HltCustomerException(ErrorCode.GROUP_LEAD_NOT_ASSIGNED);
+        }
+
+        ticket.setAssignedTo(group.getGroupLead());
+        ticket.setStatus(TicketStatus.ASSIGNED);
+    }
 
     private TicketModel mapDtoToModel(TicketDTO dto, TicketModel model) {
+        model.setTitle(dto.getTitle());
+        model.setDescription(dto.getDescription());
+        model.setStatus(dto.getStatus() != null ? dto.getStatus() : TicketStatus.OPEN);
+        model.setPriority(dto.getPriority() != null ? dto.getPriority() : TicketPriority.LOW);
+        model.setDueDate(dto.getDueDate());
+        model.setArchived(dto.getArchived() != null ? dto.getArchived() : false);
 
-        if (dto.getTitle() != null)
-            model.setTitle(dto.getTitle());
+        ProjectModel project = projectRepository.findById(dto.getProjectId())
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.PROJECT_NOT_FOUND));
+        model.setProject(project);
 
-        if (dto.getDescription() != null)
-            model.setDescription(dto.getDescription());
-
-        model.setStatus(dto.getStatus() != null ? dto.getStatus() : model.getStatus() != null ? model.getStatus() : TicketStatus.OPEN);
-        model.setPriority(dto.getPriority() != null ? dto.getPriority() : model.getPriority() != null ? model.getPriority() : TicketPriority.LOW);
-        model.setDueDate(dto.getDueDate() != null ? dto.getDueDate() : model.getDueDate());
-        model.setArchived(dto.getArchived() != null ? dto.getArchived() : model.getArchived() != null ? model.getArchived() : false);
-
-        if (dto.getProjectId() != null) {
-            ProjectModel project = projectRepository.findById(dto.getProjectId())
-                    .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND));
-            model.setProject(project);
-        } else if (model.getProject() == null) {
-            throw new HltCustomerException(ErrorCode.BUSINESS_VALIDATION_FAILED, "Project ID is required");
-        }
-
-        if (dto.getCreatedById() != null) {
-            UserModel createdBy = userRepository.findById(SecurityUtils.getCurrentUserDetails().getId())
-                    .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
-            model.setCreatedBy(createdBy);
-        }
+        UserModel createdBy = userRepository.findById(SecurityUtils.getCurrentUserDetails().getId())
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
+        model.setCreatedBy(createdBy);
 
         if (dto.getAssignedToId() != null) {
             UserModel assignedTo = userRepository.findById(dto.getAssignedToId())
                     .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
             model.setAssignedTo(assignedTo);
         }
+
         if (dto.getUserGroupDTO() != null && dto.getUserGroupDTO().getId() != null) {
             UserGroupModel group = userGroupRepository.findById(dto.getUserGroupDTO().getId())
-                    .orElseThrow(() -> new HltCustomerException(ErrorCode.GROUP_NOT_FOUND, "User group not found"));
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.GROUP_NOT_FOUND));
             model.setGroup(group);
-        } else {
-            model.setGroup(null);
         }
 
         return model;
     }
 
-
-
     private Page<TicketModel> fetchTicketsWithFilters(Pageable pageable, Long projectId, String statusStr, String priorityStr) {
-        TicketStatus status = null;
-        TicketPriority priority = null;
+        TicketStatus status = parseEnum(statusStr, TicketStatus.class, "Invalid ticket status");
+        TicketPriority priority = parseEnum(priorityStr, TicketPriority.class, "Invalid ticket priority");
 
-        if (statusStr != null) {
-            try {
-                status = TicketStatus.valueOf(statusStr.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new HltCustomerException(ErrorCode.BUSINESS_VALIDATION_FAILED, "Invalid ticket status: " + statusStr);
-            }
-        }
-
-        if (priorityStr != null) {
-            try {
-                priority = TicketPriority.valueOf(priorityStr.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new HltCustomerException(ErrorCode.BUSINESS_VALIDATION_FAILED, "Invalid ticket priority: " + priorityStr);
-            }
-        }
-
-        if (projectId != null && status != null && priority != null) {
+        if (projectId != null && status != null && priority != null)
             return ticketRepository.findByProjectIdAndStatusAndPriority(projectId, status, priority, pageable);
-        } else if (projectId != null && status != null) {
+        if (projectId != null && status != null)
             return ticketRepository.findByProjectIdAndStatus(projectId, status, pageable);
-        } else if (projectId != null && priority != null) {
+        if (projectId != null && priority != null)
             return ticketRepository.findByProjectIdAndPriority(projectId, priority, pageable);
-        } else if (status != null && priority != null) {
+        if (status != null && priority != null)
             return ticketRepository.findByStatusAndPriority(status, priority, pageable);
-        } else if (projectId != null) {
+        if (projectId != null)
             return ticketRepository.findByProjectId(projectId, pageable);
-        } else if (status != null) {
+        if (status != null)
             return ticketRepository.findByStatus(status, pageable);
-        } else if (priority != null) {
+        if (priority != null)
             return ticketRepository.findByPriority(priority, pageable);
-        } else {
-            return ticketRepository.findAll(pageable);
+
+        return ticketRepository.findAll(pageable);
+    }
+
+    private <E extends Enum<E>> E parseEnum(String value, Class<E> enumType, String errorMsg) {
+        if (value == null) return null;
+        try {
+            return Enum.valueOf(enumType, value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new HltCustomerException(ErrorCode.BUSINESS_VALIDATION_FAILED, errorMsg + ": " + value);
         }
     }
 }
