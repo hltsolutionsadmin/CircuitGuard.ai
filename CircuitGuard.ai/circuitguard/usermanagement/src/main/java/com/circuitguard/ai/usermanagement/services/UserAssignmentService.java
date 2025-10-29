@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.services;
 
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
 import com.circuitguard.ai.usermanagement.dto.UserDTO;
+import com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.model.UserGroupModel;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,12 @@ public interface UserAssignmentService {
 
     Page<UserDTO> getUsersByGroup(Long groupId, Pageable pageable);
 
-//    Page<UserGroupModel> getGroupsByProjectId(Long projectId, Pageable pageable);
+    Page<UserAssignmentDTO> getAssignmentsByTargetAndRoles(
+            AssignmentTargetType targetType,
+            Long targetId,
+            java.util.Set<AssignmentRole> roles,
+            Pageable pageable
+    );
+
 
 }

@@ -257,4 +257,23 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
         return userPage.map(user -> userPopulator.toDTO(user));
     }
 
+
+    @Override
+    public Page<UserAssignmentDTO> getAssignmentsByTargetAndRoles(
+            AssignmentTargetType targetType,
+            Long targetId,
+            Set<AssignmentRole> roles,
+            Pageable pageable) {
+
+        Page<UserAssignmentModel> page = userAssignmentRepository.findByTargetAndRoles(targetType, targetId, roles, pageable);
+
+        return page.map(assignment -> {
+            UserAssignmentDTO dto = new UserAssignmentDTO();
+            userAssignmentPopulator.populate(assignment, dto);
+            return dto;
+        });
+    }
+
+
+
 }

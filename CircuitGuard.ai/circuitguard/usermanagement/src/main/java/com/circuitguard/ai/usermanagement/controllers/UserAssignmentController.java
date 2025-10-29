@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.controllers;
 
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
 import com.circuitguard.ai.usermanagement.dto.UserDTO;
+import com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.services.UserAssignmentService;
 import com.circuitguard.commonservice.dto.StandardResponse;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/assignments")
@@ -95,5 +97,17 @@ public class UserAssignmentController {
         Page<UserDTO> result = userAssignmentService.getUsersByGroup(groupId, pageable);
         return ResponseEntity.ok(StandardResponse.page("Users fetched successfully", result));
     }
+
+    @GetMapping("/target/{targetType}/{targetId}")
+    public ResponseEntity<StandardResponse<Page<UserAssignmentDTO>>> getAssignmentsByTargetAndRoles(
+            @PathVariable AssignmentTargetType targetType,
+            @PathVariable Long targetId,
+            @RequestParam(required = false) Set<AssignmentRole> roles,
+            Pageable pageable) {
+
+        Page<UserAssignmentDTO> page = userAssignmentService.getAssignmentsByTargetAndRoles(targetType, targetId, roles, pageable);
+        return ResponseEntity.ok(StandardResponse.page("Users fetched successfully",page));
+    }
+
 
 }

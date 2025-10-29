@@ -1,5 +1,6 @@
 package com.circuitguard.ai.usermanagement.repository;
 
+import com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.model.UserAssignmentModel;
 import com.circuitguard.ai.usermanagement.model.UserModel;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserAssignmentRepository extends JpaRepository<UserAssignmentModel, Long> {
@@ -42,4 +44,17 @@ public interface UserAssignmentRepository extends JpaRepository<UserAssignmentMo
 """)
     Page<UserModel> findUsersByGroupId(@Param("groupId") Long groupId, Pageable pageable);
 
-}
+    @Query("""
+        SELECT ua FROM UserAssignmentModel ua 
+        JOIN ua.roles r
+        WHERE ua.targetType = :targetType 
+          AND ua.targetId = :targetId 
+          AND ua.active = true
+          AND r IN :roles
+    """)
+    Page<UserAssignmentModel> findByTargetAndRoles(
+            @Param("targetType") AssignmentTargetType targetType,
+            @Param("targetId") Long targetId,
+            @Param("roles") java.util.Set<AssignmentRole> roles,
+            Pageable pageable
+    );}
