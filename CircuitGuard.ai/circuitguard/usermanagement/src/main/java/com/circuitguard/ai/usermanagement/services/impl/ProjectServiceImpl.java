@@ -4,7 +4,9 @@ import com.circuitguard.ai.usermanagement.dto.ProjectDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
 import com.circuitguard.ai.usermanagement.model.OrganizationModel;
 import com.circuitguard.ai.usermanagement.model.ProjectModel;
+import com.circuitguard.ai.usermanagement.model.UserModel;
 import com.circuitguard.ai.usermanagement.populator.ProjectPopulator;
+import com.circuitguard.ai.usermanagement.repository.OrganizationRepository;
 import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
 import com.circuitguard.ai.usermanagement.repository.UserRepository;
 import com.circuitguard.ai.usermanagement.services.ProjectService;
@@ -28,17 +30,34 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final ProjectPopulator projectPopulator;
+    private final OrganizationRepository organizationRepository;
 
     @Override
-    public ProjectDTO createProject(ProjectDTO projectDTO) {
-        if (projectRepository.existsByName(projectDTO.getName())) {
-            throw new HltCustomerException(ErrorCode.BUSINESS_VALIDATION_FAILED);
+    public ProjectDTO saveOrUpdateProject(ProjectDTO projectDTO) {
+
+        ProjectModel model;
+
+        if (projectDTO.getId() == null) {
+            if (projectRepository.existsByProjectCode(projectDTO.getProjectCode())) {
+                throw new HltCustomerException(ErrorCode.PROJECT_ALREADY_REGISTERED);
+            }
+            model = new ProjectModel();
+        } else {
+            model = projectRepository.findById(projectDTO.getId())
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.PROJECT_NOT_FOUND));
+
+            if (!model.getProjectCode().equals(projectDTO.getProjectCode())
+                    && projectRepository.existsByProjectCode(projectDTO.getProjectCode())) {
+                throw new HltCustomerException(ErrorCode.PROJECT_ALREADY_REGISTERED);
+            }
         }
 
-        ProjectModel model = mapDtoToModel(projectDTO, new ProjectModel());
+        model = mapDtoToModel(projectDTO, model);
+
         ProjectModel saved = projectRepository.save(model);
         return projectPopulator.toDTO(saved);
     }
+
 
     @Override
     public ProjectDTO getProjectById(Long projectId) {
@@ -76,43 +95,49 @@ public class ProjectServiceImpl implements ProjectService {
 
 
     private ProjectModel mapDtoToModel(ProjectDTO dto, ProjectModel model) {
-        model.setName(dto.getName());
-        model.setDescription(dto.getDescription());
-        model.setStartDate(dto.getStartDate());
-        model.setEndDate(dto.getEndDate());
-        model.setTargetEndDate(dto.getTargetEndDate());
-        model.setDueDate(dto.getDueDate());
-        model.setStatus(dto.getStatus());
-        model.setType(dto.getType());
-        model.setProgressPercentage(dto.getProgressPercentage());
-        model.setBudgetRange(dto.getBudgetRange());
-        model.setExpectedTeamSize(dto.getExpectedTeamSize());
-        model.setArchived(dto.getArchived());
 
-//        if (dto.getClientId() != null) {
-//            model.setClient(userRepository.findById(dto.getClientId())
-//                    .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND)));
-//        }
+        if (dto.getName() != null) model.setName(dto.getName());
+        if (dto.getProjectCode() != null) model.setProjectCode(dto.getProjectCode());
+        if (dto.getDescription() != null) model.setDescription(dto.getDescription());
+        if (dto.getStartDate() != null) model.setStartDate(dto.getStartDate());
+        if (dto.getEndDate() != null) model.setEndDate(dto.getEndDate());
+        if (dto.getTargetEndDate() != null) model.setTargetEndDate(dto.getTargetEndDate());
+        if (dto.getDueDate() != null) model.setDueDate(dto.getDueDate());
+        if (dto.getStatus() != null) model.setStatus(dto.getStatus());
+        if (dto.getType() != null) model.setType(dto.getType());
+        if (dto.getProgressPercentage() != null) model.setProgressPercentage(dto.getProgressPercentage());
+        if (dto.getBudgetRange() != null) model.setBudgetRange(dto.getBudgetRange());
+        if (dto.getExpectedTeamSize() != null) model.setExpectedTeamSize(dto.getExpectedTeamSize());
+        if (dto.getArchived() != null) model.setArchived(dto.getArchived());
 
-//        if (dto.getProjectManagerId() != null) {
-//            model.setProjectManager(userRepository.findById(dto.getProjectManagerId())
-//                    .orElseThrow(() -> new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND)));
-//        }
-
-        if (dto.getOwnerOrganizationId() != null) {
-            OrganizationModel ownerOrg = new OrganizationModel();
-            ownerOrg.setId(dto.getOwnerOrganizationId());
-            model.setOwnerOrganization(ownerOrg);
+        if (dto.getClientId() != null) {
+            model.setClient(getUserById(dto.getClientId(), ErrorCode.CLIENT_NOT_FOUND));
         }
 
-//        if (dto.getClientOrganizationId() != null) {
-//            OrganizationModel clientOrg = new OrganizationModel();
-//            clientOrg.setId(dto.getClientOrganizationId());
-//            model.setClientOrganization(clientOrg);
-//        }
+        if (dto.getProjectManagerId() != null) {
+            model.setProjectManager(getUserById(dto.getProjectManagerId(), ErrorCode.USER_NOT_FOUND));
+        }
+
+        if (dto.getOwnerOrganizationId() != null)
+            model.setOwnerOrganization(getOrganizationById(dto.getOwnerOrganizationId(), ErrorCode.ORGANIZATION_NOT_FOUND));
+
+        if (dto.getClientOrganizationId() != null)
+            model.setClientOrganization(getOrganizationById(dto.getClientOrganizationId(), ErrorCode.CLIENT_ORGANIZATION_NOT_FOUND));
 
         return model;
     }
+    private UserModel getUserById(Long userId, ErrorCode errorCode) {
+        return userId == null ? null :
+                userRepository.findById(userId)
+                        .orElseThrow(() -> new HltCustomerException(errorCode));
+    }
+
+    private OrganizationModel getOrganizationById(Long orgId, ErrorCode errorCode) {
+        if (orgId == null) return null;
+        return organizationRepository.findById(orgId)
+                .orElseThrow(() -> new HltCustomerException(errorCode));
+    }
+
 
     private Page<ProjectModel> fetchProjectsWithFilters(Pageable pageable, Long clientId, Long managerId, String statusStr) {
         ProjectStatus status = null;

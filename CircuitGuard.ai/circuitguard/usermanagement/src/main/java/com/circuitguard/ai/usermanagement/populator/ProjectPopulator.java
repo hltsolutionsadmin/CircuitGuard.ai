@@ -30,6 +30,7 @@ public class ProjectPopulator implements Populator<ProjectModel, ProjectDTO> {
         // Basic fields
         target.setId(source.getId());
         target.setName(source.getName());
+        target.setProjectCode(source.getProjectCode());
         target.setDescription(source.getDescription());
         target.setStartDate(source.getStartDate());
         target.setEndDate(source.getEndDate());

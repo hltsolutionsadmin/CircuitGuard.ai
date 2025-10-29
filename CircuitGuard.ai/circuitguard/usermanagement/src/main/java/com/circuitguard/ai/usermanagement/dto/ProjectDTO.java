@@ -22,6 +22,9 @@ public class ProjectDTO {
     private Long id;
 
     @NotBlank(message = "Project name is required")
+    private String projectCode;
+
+    @NotBlank(message = "Project name is required")
     private String name;
 
     @Size(max = 2000, message = "Description cannot exceed 2000 characters")
@@ -51,7 +54,7 @@ public class ProjectDTO {
 
     @Min(value = 0, message = "Progress percentage must be at least 0")
     @Max(value = 100, message = "Progress percentage cannot exceed 100")
-    private int progressPercentage = 0;
+    private Integer progressPercentage = 0;
 
     private String budgetRange;
 

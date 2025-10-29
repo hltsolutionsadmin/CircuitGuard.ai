@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface ProjectService {
 
-    ProjectDTO createProject(ProjectDTO projectDTO);
+    ProjectDTO saveOrUpdateProject(ProjectDTO projectDTO);
 
     ProjectDTO getProjectById(Long projectId);
 

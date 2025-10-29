@@ -18,7 +18,7 @@ public class ProjectController {
 
     @PostMapping
     public StandardResponse<ProjectDTO> createProject(@RequestBody ProjectDTO projectDTO) {
-        ProjectDTO created = projectService.createProject(projectDTO);
+        ProjectDTO created = projectService.saveOrUpdateProject(projectDTO);
         return StandardResponse.single( "Project created successfully",created);
     }
 

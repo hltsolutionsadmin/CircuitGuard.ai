@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.repository;
 
 import com.circuitguard.ai.usermanagement.model.ProjectModel;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,4 +38,6 @@ public interface ProjectRepository extends JpaRepository<ProjectModel, Long> {
     Page<ProjectModel> findByOrganization(@Param("orgId") Long organizationId, Pageable pageable);
 
     Optional<ProjectModel> findById( Long targetId);
+
+    boolean existsByProjectCode( String projectCode);
 }

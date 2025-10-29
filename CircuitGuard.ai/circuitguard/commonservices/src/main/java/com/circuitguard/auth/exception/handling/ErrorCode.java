@@ -8,6 +8,12 @@ public enum ErrorCode {
     // User & Auth Errors (1000–1099)
     // ===========================
     BUSINESS_VALIDATION_FAILED(1002, "Business validation failed", HttpStatus.BAD_REQUEST),
+    PROJECT_ALREADY_REGISTERED(1003, "Project already registered", HttpStatus.CONFLICT),
+    CLIENT_NOT_FOUND(1005, "Client not found", HttpStatus.NOT_FOUND),
+
+    ORGANIZATION_NOT_FOUND(1005, "Organization not found", HttpStatus.NOT_FOUND),
+    CLIENT_ORGANIZATION_NOT_FOUND(1006, "Client organization not found", HttpStatus.NOT_FOUND),
+
     USER_NOT_FOUND(1000, "User Not Found", HttpStatus.NOT_FOUND),
     SKILL_NOT_FOUND(2001, "Skill not found", HttpStatus.NOT_FOUND),
     USER_ALREADY_EXISTS(1001, "User Already Exists", HttpStatus.CONFLICT),
@@ -40,7 +46,6 @@ public enum ErrorCode {
     USER_CREATION_FAILED(1006, "Failed to register user ,use new userdetails", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_PROJECT_REFERENCE(1051, "Invalid project reference", HttpStatus.BAD_REQUEST),
     USER_ALREADY_REGISTERED(1005, "User is already registered for this target", HttpStatus.CONFLICT),
-    ORGANIZATION_NOT_FOUND(1003, "Organization not found", HttpStatus.NOT_FOUND),
 
 
     GROUP_NOT_FOUND(2001, "User group not found", HttpStatus.NOT_FOUND),

@@ -16,7 +16,10 @@ import java.util.Set;
                 @Index(name = "idx_user_assignment_target", columnList = "TARGET_ID,TARGET_TYPE")
         },
         uniqueConstraints = {
-                @UniqueConstraint(name = "uk_user_assignment", columnNames = {"USER_ID", "TARGET_ID", "TARGET_TYPE"})
+                @UniqueConstraint(
+                        name = "uk_user_assignment_per_project",
+                        columnNames = {"USER_ID", "TARGET_ID", "TARGET_TYPE"}
+                )
         }
 )
 @Getter
@@ -33,7 +36,7 @@ public class UserAssignmentModel extends GenericModel {
     private UserModel user;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "TARGET_TYPE", nullable = false)
+    @Column(name = "TARGET_TYPE", nullable = false, length = 50)
     private AssignmentTargetType targetType;
 
     @Column(name = "TARGET_ID", nullable = false)
@@ -42,13 +45,13 @@ public class UserAssignmentModel extends GenericModel {
     @Column(name = "IS_ACTIVE", nullable = false)
     private Boolean active = true;
 
-    @ElementCollection(targetClass = AssignmentRole.class, fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = AssignmentRole.class)
     @CollectionTable(
             name = "USER_ASSIGNMENT_ROLES",
             joinColumns = @JoinColumn(name = "USER_ASSIGNMENT_ID")
     )
     @Enumerated(EnumType.STRING)
-    @Column(name = "ROLE", nullable = false)
+    @Column(name = "ROLE", nullable = false, length = 50)
     private Set<AssignmentRole> roles = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -58,4 +61,21 @@ public class UserAssignmentModel extends GenericModel {
             inverseJoinColumns = @JoinColumn(name = "USER_GROUP_ID")
     )
     private Set<UserGroupModel> groups = new HashSet<>();
+
+    /**
+     * Utility method to safely add a group to this assignment.
+     * Prevents duplicates and ensures clean linking.
+     */
+    public void addGroup(UserGroupModel group) {
+        if (group != null) {
+            this.groups.add(group);
+        }
+    }
+
+    //remove a group from this assignment.
+    public void removeGroup(UserGroupModel group) {
+        if (group != null) {
+            this.groups.remove(group);
+        }
+    }
 }
