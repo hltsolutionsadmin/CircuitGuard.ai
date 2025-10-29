@@ -14,6 +14,7 @@ public enum ErrorCode {
     TICKET_ALREADY_ASSIGNED(2002, "Ticket already assigned", HttpStatus.CONFLICT),
     TICKET_ALREADY_CLOSED(2003, "Ticket already closed", HttpStatus.BAD_REQUEST),
     UNAUTHORIZED_ACTION(2004, "You are not authorized to perform this action", HttpStatus.FORBIDDEN),
+    PROJECT_CODE_GENERATION_FAILED(1015, "Unable to generate unique project code", HttpStatus.INTERNAL_SERVER_ERROR),
 
     ORGANIZATION_NOT_FOUND(1005, "Organization not found", HttpStatus.NOT_FOUND),
     CLIENT_ORGANIZATION_NOT_FOUND(1006, "Client organization not found", HttpStatus.NOT_FOUND),

@@ -35,30 +35,34 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectCodeGenerator projectCodeGenerator;
 
     @Override
+    @Transactional
     public ProjectDTO saveOrUpdateProject(ProjectDTO projectDTO) {
-
         ProjectModel model;
 
         if (projectDTO.getId() == null) {
-            if (projectRepository.existsByProjectCode(projectDTO.getProjectCode())) {
-                throw new HltCustomerException(ErrorCode.PROJECT_ALREADY_REGISTERED);
-            }
             model = new ProjectModel();
+
+            model.setProjectCode(generateUniqueProjectCode(projectDTO.getName()));
+
         } else {
             model = projectRepository.findById(projectDTO.getId())
                     .orElseThrow(() -> new HltCustomerException(ErrorCode.PROJECT_NOT_FOUND));
 
-            if (!model.getProjectCode().equals(projectDTO.getProjectCode())
+            if (projectDTO.getProjectCode() != null
+                    && !model.getProjectCode().equals(projectDTO.getProjectCode())
                     && projectRepository.existsByProjectCode(projectDTO.getProjectCode())) {
                 throw new HltCustomerException(ErrorCode.PROJECT_ALREADY_REGISTERED);
             }
         }
 
-        model = mapDtoToModel(projectDTO, model);
+        mapDtoToModel(projectDTO, model);
 
         ProjectModel saved = projectRepository.save(model);
+
         return projectPopulator.toDTO(saved);
     }
+
+
 
 
     @Override
@@ -99,7 +103,6 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectModel mapDtoToModel(ProjectDTO dto, ProjectModel model) {
 
         if (dto.getName() != null) model.setName(dto.getName());
-        model.setProjectCode(projectCodeGenerator.generateCode(dto.getName()));
         if (dto.getDescription() != null) model.setDescription(dto.getDescription());
         if (dto.getStartDate() != null) model.setStartDate(dto.getStartDate());
         if (dto.getEndDate() != null) model.setEndDate(dto.getEndDate());
@@ -170,5 +173,22 @@ public class ProjectServiceImpl implements ProjectService {
             return projectRepository.findAll(pageable);
         }
     }
+
+
+    private String generateUniqueProjectCode(String projectName) {
+        final int MAX_RETRIES = 5;
+
+        for (int i = 0; i < MAX_RETRIES; i++) {
+            String candidate = projectCodeGenerator.generateCode(projectName);
+            boolean exists = projectRepository.existsByProjectCode(candidate);
+
+            if (!exists) {
+                return candidate;
+            }
+        }
+
+        throw new HltCustomerException(ErrorCode.PROJECT_CODE_GENERATION_FAILED);
+    }
+
 
 }
