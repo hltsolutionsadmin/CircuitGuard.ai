@@ -1,12 +1,14 @@
 package com.circuitguard.ai.usermanagement.controllers;
 
 import com.circuitguard.ai.usermanagement.dto.ProjectDTO;
+import com.circuitguard.ai.usermanagement.dto.ProjectStatsDTO;
 import com.circuitguard.ai.usermanagement.services.ProjectService;
 import com.circuitguard.commonservice.dto.StandardResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -54,5 +56,11 @@ public class ProjectController {
         Pageable pageable = PageRequest.of(page, size);
         Page<ProjectDTO> projects = projectService.getProjectsForOrganization(orgId, pageable);
         return StandardResponse.page("Projects fetched successfully", projects);
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<StandardResponse<ProjectStatsDTO>> getProjectStatistics() {
+        ProjectStatsDTO stats = projectService.getProjectStats();
+        return ResponseEntity.ok(StandardResponse.single("Projects stats fetch successful",stats));
     }
 }

@@ -1,6 +1,7 @@
 package com.circuitguard.ai.usermanagement.services;
 
 import com.circuitguard.ai.usermanagement.dto.ProjectDTO;
+import com.circuitguard.ai.usermanagement.dto.ProjectStatsDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,5 +16,7 @@ public interface ProjectService {
     void deleteProject(Long projectId);
 
     Page<ProjectDTO> getProjectsForOrganization(Long organizationId, Pageable pageable);
+
+    ProjectStatsDTO getProjectStats();
 
 }

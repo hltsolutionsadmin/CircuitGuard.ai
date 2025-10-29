@@ -1,6 +1,7 @@
 package com.circuitguard.ai.usermanagement.services.impl;
 
 import com.circuitguard.ai.usermanagement.dto.ProjectDTO;
+import com.circuitguard.ai.usermanagement.dto.ProjectStatsDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
 import com.circuitguard.ai.usermanagement.model.OrganizationModel;
 import com.circuitguard.ai.usermanagement.model.ProjectModel;
@@ -97,6 +98,16 @@ public class ProjectServiceImpl implements ProjectService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(dtos, pageable, projectsPage.getTotalElements());
+    }
+
+    @Override
+    public ProjectStatsDTO getProjectStats() {
+        return ProjectStatsDTO.builder()
+                .totalProjects(projectRepository.countAllProjects())
+                .activeProjects(projectRepository.countActiveProjects())
+                .completedProjects(projectRepository.countCompletedProjects())
+                .onHoldProjects(projectRepository.countOnHoldProjects())
+                .build();
     }
 
 

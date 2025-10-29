@@ -40,4 +40,16 @@ public interface ProjectRepository extends JpaRepository<ProjectModel, Long> {
     Optional<ProjectModel> findById( Long targetId);
 
     boolean existsByProjectCode( String projectCode);
+
+    @Query("SELECT COUNT(p) FROM ProjectModel p")
+    long countAllProjects();
+
+    @Query("SELECT COUNT(p) FROM ProjectModel p WHERE p.status = com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus.IN_PROGRESS")
+    long countActiveProjects();
+
+    @Query("SELECT COUNT(p) FROM ProjectModel p WHERE p.status = com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus.COMPLETED")
+    long countCompletedProjects();
+
+    @Query("SELECT COUNT(p) FROM ProjectModel p WHERE p.status = com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus.ON_HOLD")
+    long countOnHoldProjects();
 }
