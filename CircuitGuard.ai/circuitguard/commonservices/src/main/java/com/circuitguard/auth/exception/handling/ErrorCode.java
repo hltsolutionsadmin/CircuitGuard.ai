@@ -30,6 +30,9 @@ public enum ErrorCode {
     ROLES_REQUIRED(1003, "At least one role must be provided", HttpStatus.BAD_REQUEST),
     USER_REQUIRED(1010, "At least one user is required", HttpStatus.BAD_REQUEST),
     USER_ROLE_MISMATCH(1011, "User count and role count must match", HttpStatus.BAD_REQUEST),
+    GROUP_NOT_FOUND_FOR_PROJECT(2005, "No user group found for the project", HttpStatus.NOT_FOUND),
+    GROUP_LEAD_NOT_ASSIGNED(2006, "Group lead not assigned for the project group", HttpStatus.BAD_REQUEST),
+    TICKET_AUTO_ASSIGNMENT_FAILED(2007, "Failed to auto-assign high priority ticket", HttpStatus.INTERNAL_SERVER_ERROR),
 
     // ===========================
     // Address & App Info (1900–1999)

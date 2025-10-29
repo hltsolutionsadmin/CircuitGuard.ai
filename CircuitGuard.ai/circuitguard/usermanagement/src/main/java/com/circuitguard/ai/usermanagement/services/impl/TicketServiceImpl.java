@@ -43,6 +43,9 @@ public class TicketServiceImpl implements TicketService {
 //            ticketModel.setTicketId(generateTicketId(ticketModel.getProject()));
 //        }
         TicketModel saved = ticketRepository.save(ticketModel);
+        if(saved.getPriority()==TicketPriority.HIGH){
+            autoAssignHighPriorityTicket(saved);
+        }
         return ticketPopulator.toDTO(saved);
     }
 
@@ -92,6 +95,26 @@ public class TicketServiceImpl implements TicketService {
         ticketCommentPopulator.populate(saved, resultDTO);
         return resultDTO;
     }
+
+    private void autoAssignHighPriorityTicket(TicketModel ticket) {
+        try {
+            UserGroupModel group = userGroupRepository
+                    .findByProjectId(ticket.getProject().getId())
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.GROUP_NOT_FOUND_FOR_PROJECT));
+
+            if (group.getGroupLead() == null) {
+                throw new HltCustomerException(ErrorCode.GROUP_LEAD_NOT_ASSIGNED);
+            }
+
+            ticket.setAssignedTo(group.getGroupLead());
+            ticket.setStatus(TicketStatus.ASSIGNED);
+            ticketRepository.save(ticket);
+
+        } catch (Exception e) {
+            throw new HltCustomerException(ErrorCode.TICKET_AUTO_ASSIGNMENT_FAILED);
+        }
+    }
+
 
 
     private TicketModel mapDtoToModel(TicketDTO dto, TicketModel model) {
