@@ -10,6 +10,7 @@ import com.circuitguard.ai.usermanagement.repository.OrganizationRepository;
 import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
 import com.circuitguard.ai.usermanagement.repository.UserRepository;
 import com.circuitguard.ai.usermanagement.services.ProjectService;
+import com.circuitguard.ai.usermanagement.utils.ProjectCodeGenerator;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final UserRepository userRepository;
     private final ProjectPopulator projectPopulator;
     private final OrganizationRepository organizationRepository;
+    private final ProjectCodeGenerator projectCodeGenerator;
 
     @Override
     public ProjectDTO saveOrUpdateProject(ProjectDTO projectDTO) {
@@ -97,7 +99,7 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectModel mapDtoToModel(ProjectDTO dto, ProjectModel model) {
 
         if (dto.getName() != null) model.setName(dto.getName());
-        if (dto.getProjectCode() != null) model.setProjectCode(dto.getProjectCode());
+        model.setProjectCode(projectCodeGenerator.generateCode(dto.getName()));
         if (dto.getDescription() != null) model.setDescription(dto.getDescription());
         if (dto.getStartDate() != null) model.setStartDate(dto.getStartDate());
         if (dto.getEndDate() != null) model.setEndDate(dto.getEndDate());
