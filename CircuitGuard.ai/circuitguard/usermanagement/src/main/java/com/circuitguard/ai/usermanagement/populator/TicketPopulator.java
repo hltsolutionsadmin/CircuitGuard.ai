@@ -1,4 +1,3 @@
-
 package com.circuitguard.ai.usermanagement.populator;
 
 import com.circuitguard.ai.usermanagement.dto.TicketCommentDTO;
@@ -15,12 +14,13 @@ import java.util.stream.Collectors;
 public class TicketPopulator implements Populator<TicketModel, TicketDTO> {
 
     private final TicketCommentPopulator commentPopulator;
+    private final UserGroupPopulator userGroupPopulator;
 
     @Autowired
-    private  UserGroupPopulator userGroupPopulator;
-
-    public TicketPopulator(TicketCommentPopulator commentPopulator) {
+    public TicketPopulator(TicketCommentPopulator commentPopulator,
+                           UserGroupPopulator userGroupPopulator) {
         this.commentPopulator = commentPopulator;
+        this.userGroupPopulator = userGroupPopulator;
     }
 
     @Override
@@ -49,15 +49,14 @@ public class TicketPopulator implements Populator<TicketModel, TicketDTO> {
             target.setUserGroupDTO(groupDTO);
         }
 
-
         if (source.getCreatedBy() != null) {
             target.setCreatedById(source.getCreatedBy().getId());
-//            target.setCreatedByName(source.getCreatedBy().getFullName());
+            target.setCreatedByName(source.getCreatedBy().getFullName());
         }
 
         if (source.getAssignedTo() != null) {
             target.setAssignedToId(source.getAssignedTo().getId());
-//            target.setAssignedToName(source.getAssignedTo().getFullName());
+            target.setAssignedToName(source.getAssignedTo().getFullName());
         }
 
         if (source.getComments() != null) {

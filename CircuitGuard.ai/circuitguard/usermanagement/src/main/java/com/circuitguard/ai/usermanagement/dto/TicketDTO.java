@@ -39,8 +39,10 @@ public class TicketDTO {
     private Long projectId;
 
     private Long createdById;
+    private String createdByName;
 
     private Long assignedToId;
+    private String assignedToName;
 
     private LocalDateTime resolvedAt;
 
