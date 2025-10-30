@@ -39,7 +39,6 @@ public class UserModel extends GenericModel {
     @Column(name = "FULL_NAME")
     private String fullName;
 
-    @Size(max = 20)
     @Column(name = "USERNAME")
     private String username;
 

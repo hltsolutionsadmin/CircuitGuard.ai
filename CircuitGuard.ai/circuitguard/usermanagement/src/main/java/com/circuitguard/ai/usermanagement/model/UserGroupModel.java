@@ -29,5 +29,4 @@ public class UserGroupModel extends GenericModel {
     private UserModel groupLead;
 
 
-
 }

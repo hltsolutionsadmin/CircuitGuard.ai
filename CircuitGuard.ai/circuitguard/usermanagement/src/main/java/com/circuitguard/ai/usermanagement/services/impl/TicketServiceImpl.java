@@ -147,7 +147,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     private void autoAssignHighPriorityTicket(TicketModel ticket) {
-        UserGroupModel group = userGroupRepository.findByProjectId(ticket.getProject().getId())
+        UserGroupModel group = userGroupRepository.findByGroupNameAndProject_Id(ticket.getStatus().name(),ticket.getProject().getId())
                 .orElseThrow(() -> new HltCustomerException(ErrorCode.GROUP_NOT_FOUND_FOR_PROJECT));
 
         if (group.getGroupLead() == null) {
