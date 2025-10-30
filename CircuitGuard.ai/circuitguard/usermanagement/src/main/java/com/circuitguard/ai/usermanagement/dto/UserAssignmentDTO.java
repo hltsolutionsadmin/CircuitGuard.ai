@@ -15,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UserAssignmentDTO {
 
+    private Long id;
+
     private List<Long> userIds = new ArrayList<>();
 
     @NotNull(message = "Target type is required")

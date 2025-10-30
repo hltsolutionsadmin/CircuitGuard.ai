@@ -19,6 +19,7 @@ public class UserAssignmentPopulator implements Populator<UserAssignmentModel, U
             return;
         }
 
+        target.setId(source.getId());
         target.setTargetType(source.getTargetType());
         target.setTargetId(source.getTargetId());
         target.setActive(source.getActive());
