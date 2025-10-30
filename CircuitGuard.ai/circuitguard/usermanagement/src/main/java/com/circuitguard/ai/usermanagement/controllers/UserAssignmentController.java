@@ -1,11 +1,13 @@
 package com.circuitguard.ai.usermanagement.controllers;
 
+import com.circuitguard.ai.usermanagement.dto.AssignmentStatusUpdateRequest;
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
 import com.circuitguard.ai.usermanagement.dto.UserDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.services.UserAssignmentService;
 import com.circuitguard.commonservice.dto.StandardResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
@@ -83,6 +85,19 @@ public class UserAssignmentController {
     public ResponseEntity<StandardResponse<Void>> removeAssignment(@PathVariable Long id) {
         userAssignmentService.removeAssignment(id);
         return ResponseEntity.ok(StandardResponse.message("User assignment removed successfully"));
+    }
+    @PutMapping("/{id}/status")
+    public ResponseEntity<StandardResponse<Void>> updateAssignmentStatus(
+            @PathVariable Long id,
+            @Valid @RequestBody AssignmentStatusUpdateRequest request) {
+
+        userAssignmentService.updateAssignmentStatus(id, request.getActive());
+
+        String message = request.getActive()
+                ? "User assignment activated successfully"
+                : "User assignment deactivated successfully";
+
+        return ResponseEntity.ok(StandardResponse.message(message));
     }
 
     @GetMapping("/{groupId}/users")

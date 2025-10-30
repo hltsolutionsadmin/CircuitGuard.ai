@@ -5,6 +5,7 @@ import com.circuitguard.ai.usermanagement.dto.UserDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.model.UserGroupModel;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -35,4 +36,5 @@ public interface UserAssignmentService {
     );
 
 
+    void updateAssignmentStatus(Long assignmentId, boolean active);
 }

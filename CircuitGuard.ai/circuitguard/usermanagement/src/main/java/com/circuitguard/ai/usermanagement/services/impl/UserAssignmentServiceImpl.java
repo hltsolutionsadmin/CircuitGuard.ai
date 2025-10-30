@@ -199,7 +199,26 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
     public void removeAssignment(Long assignmentId) {
         UserAssignmentModel assignment = userAssignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new HltCustomerException(ErrorCode.ASSIGNMENT_NOT_FOUND));
-        assignment.setActive(false);
+        assignment.getGroups().clear();
+        assignment.getRoles().clear();
+        userAssignmentRepository.save(assignment);
+    }
+
+    @Override
+    @Transactional
+    public void updateAssignmentStatus(Long assignmentId, boolean active) {
+        UserAssignmentModel assignment = userAssignmentRepository.findById(assignmentId)
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+
+        if (Boolean.TRUE.equals(active) && Boolean.TRUE.equals(assignment.getActive())) {
+            throw new HltCustomerException(ErrorCode.ASSIGNMENT_ALREADY_ACTIVE);
+        }
+
+        if (Boolean.FALSE.equals(active) && Boolean.FALSE.equals(assignment.getActive())) {
+            throw new HltCustomerException(ErrorCode.ASSIGNMENT_ALREADY_INACTIVE);
+        }
+
+        assignment.setActive(active);
         userAssignmentRepository.save(assignment);
     }
 

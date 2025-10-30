@@ -15,6 +15,9 @@ public enum ErrorCode {
     TICKET_ALREADY_CLOSED(2003, "Ticket already closed", HttpStatus.BAD_REQUEST),
     UNAUTHORIZED_ACTION(2004, "You are not authorized to perform this action", HttpStatus.FORBIDDEN),
     PROJECT_CODE_GENERATION_FAILED(1015, "Unable to generate unique project code", HttpStatus.INTERNAL_SERVER_ERROR),
+    ASSIGNMENT_ALREADY_ACTIVE(1201, "Assignment is already active", HttpStatus.BAD_REQUEST),
+    ASSIGNMENT_ALREADY_INACTIVE(1202, "Assignment is already inactive", HttpStatus.BAD_REQUEST),
+    ASSIGNMENT_NOT_FOUND(1203, "Assignment not found", HttpStatus.NOT_FOUND),
 
     ORGANIZATION_NOT_FOUND(1005, "Organization not found", HttpStatus.NOT_FOUND),
     CLIENT_ORGANIZATION_NOT_FOUND(1006, "Client organization not found", HttpStatus.NOT_FOUND),
@@ -31,9 +34,7 @@ public enum ErrorCode {
     DUPLICATE_ENTRY(1005, "Duplicate entry already exists", HttpStatus.CONFLICT),
     PROJECT_NOT_FOUND(1003, "Project not found", HttpStatus.NOT_FOUND),
     TECH_STACK_NOT_FOUND(1004, "Technology stack not found", HttpStatus.NOT_FOUND),
-    ASSIGNMENT_NOT_FOUND(2001, "User Assignment not found", HttpStatus.NOT_FOUND),
     INVALID_ASSIGNMENT_REQUEST(2002, "User ID, TargetType, and TargetID are required", HttpStatus.BAD_REQUEST),
-    // ===========================
     OTP_EXPIRED(1801, "OTP Expired", HttpStatus.BAD_REQUEST),
     TOKEN_PROCESSING_ERROR(1804, "Error Processing Refresh Token", HttpStatus.INTERNAL_SERVER_ERROR),
     AZURE_BLOB_UPLOAD_FAILED(4001, "Failed to upload file to Azure Blob Storage", HttpStatus.INTERNAL_SERVER_ERROR),
