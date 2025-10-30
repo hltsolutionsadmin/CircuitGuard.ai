@@ -18,6 +18,8 @@ public enum ErrorCode {
     ASSIGNMENT_ALREADY_ACTIVE(1201, "Assignment is already active", HttpStatus.BAD_REQUEST),
     ASSIGNMENT_ALREADY_INACTIVE(1202, "Assignment is already inactive", HttpStatus.BAD_REQUEST),
     ASSIGNMENT_NOT_FOUND(1203, "Assignment not found", HttpStatus.NOT_FOUND),
+    INVALID_TARGET_TYPE(2008, "Invalid or unsupported assignment target type", HttpStatus.BAD_REQUEST),
+    INVALID_CLIENT_ROLE(2009, "Invalid role assigned for client type", HttpStatus.BAD_REQUEST),
 
     ORGANIZATION_NOT_FOUND(1005, "Organization not found", HttpStatus.NOT_FOUND),
     CLIENT_ORGANIZATION_NOT_FOUND(1006, "Client organization not found", HttpStatus.NOT_FOUND),

@@ -32,6 +32,15 @@ public class UserAssignmentController {
         return ResponseEntity.ok(StandardResponse.list("User assignment(s) saved successfully", savedList));
     }
 
+    @PostMapping("/project/client")
+    public ResponseEntity<StandardResponse<UserAssignmentDTO>> addClientToProject(
+            @Valid @RequestBody UserAssignmentDTO dto
+    ) {
+        UserAssignmentDTO response = userAssignmentService.addClientToProject(dto);
+        return ResponseEntity.ok(StandardResponse.single("Client assigned to project successfully", response));
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<StandardResponse<UserAssignmentDTO>> getAssignmentById(@PathVariable Long id) {
         UserAssignmentDTO dto = userAssignmentService.getAssignmentById(id);

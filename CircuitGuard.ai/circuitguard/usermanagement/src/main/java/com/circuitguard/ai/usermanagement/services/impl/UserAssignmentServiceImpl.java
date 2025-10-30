@@ -48,6 +48,8 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
                 : handleTargetAssignment(dto);
     }
 
+
+
     private UserAssignmentDTO handleOrganizationAssignment(UserAssignmentDTO dto) {
         UserModel user = registerNewAdmin(dto);
 
@@ -112,6 +114,53 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
 
         return responseList;
     }
+
+    @Override
+    @Transactional
+    public UserAssignmentDTO addClientToProject(UserAssignmentDTO dto) {
+
+        ProjectModel project = projectRepository.findById(dto.getTargetId())
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.PROJECT_NOT_FOUND));
+
+        if (dto.getRoles() == null || dto.getRoles().isEmpty()) {
+            throw new HltCustomerException(ErrorCode.ROLES_REQUIRED);
+        }
+
+        AssignmentRole role = dto.getRoles().get(0);
+        if (!role.name().startsWith("CLIENT_")) {
+            throw new HltCustomerException(ErrorCode.INVALID_CLIENT_ROLE);
+        }
+
+        if (dto.getTargetType() != AssignmentTargetType.PROJECT) {
+            throw new HltCustomerException(ErrorCode.INVALID_TARGET_TYPE);
+        }
+
+        UserModel user = userService.findByEmail(dto.getEmail());
+
+        if (user == null) {
+            user = registerNewAdmin(dto);
+        }
+
+        userAssignmentRepository.findByUser_IdAndTargetTypeAndTargetId(user.getId(), dto.getTargetType(), dto.getTargetId())
+                .ifPresent(existing -> {
+                    throw new HltCustomerException(ErrorCode.USER_ALREADY_REGISTERED);
+                });
+
+        UserAssignmentModel assignment = UserAssignmentModel.builder()
+                .user(user)
+                .targetType(dto.getTargetType())
+                .targetId(dto.getTargetId())
+                .active(true)
+                .roles(Set.of(role))
+                .build();
+
+        UserAssignmentModel saved = userAssignmentRepository.save(assignment);
+
+        UserAssignmentDTO responseDTO = new UserAssignmentDTO();
+        userAssignmentPopulator.populate(saved, responseDTO);
+        return responseDTO;
+    }
+
 
 
     private void validateAssignmentRequest(UserAssignmentDTO dto) {
