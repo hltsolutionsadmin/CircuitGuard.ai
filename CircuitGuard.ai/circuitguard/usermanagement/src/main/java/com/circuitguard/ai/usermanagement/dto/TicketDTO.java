@@ -51,4 +51,6 @@ public class TicketDTO {
 
     private UserGroupDTO userGroupDTO;
 
+    private Long ticketNumber;
+
 }

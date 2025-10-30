@@ -46,6 +46,10 @@ public class TicketServiceImpl implements TicketService {
 
         applyDtoToModel(ticketDTO, ticketModel);
 
+        if (ticketModel.getId() == null) {
+            generateTicketIdIfNew(ticketModel);
+        }
+
         if (ticketModel.getPriority() == TicketPriority.HIGH && ticketModel.getAssignedTo() == null) {
             autoAssignHighPriorityTicket(ticketModel);
         }
@@ -233,5 +237,28 @@ public class TicketServiceImpl implements TicketService {
             setter.accept(value);
         }
     }
+
+    private void generateTicketIdIfNew(TicketModel model) {
+        if (model.getId() != null) return;
+
+        Long projectId = model.getProject().getId();
+
+        Long lastNumber = ticketRepository.getLastTicketNumberByProject(projectId);
+        Long nextNumber = lastNumber + 1;
+
+        String projectKey = getProjectKey(model.getProject());
+        String ticketId = projectKey + "-" + nextNumber;
+
+        model.setTicketNumber(nextNumber);
+        model.setTicketId(ticketId);
+    }
+
+    private String getProjectKey(ProjectModel project) {
+        String name = project.getName();
+        return name.replaceAll("[^A-Za-z]", "")
+                .substring(0, Math.min(4, name.length()))
+                .toUpperCase();
+    }
+
 
 }
