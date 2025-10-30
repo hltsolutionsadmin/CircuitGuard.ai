@@ -24,7 +24,7 @@ public class UserDTO {
     @Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters")
     private String fullName;
 
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+
     private String username;
 
     @Email(message = "Invalid email format")
@@ -32,10 +32,7 @@ public class UserDTO {
 
     private Long profilePicture;
 
-    @Pattern(
-            regexp = "^[0-9]{10,15}$",
-            message = "Primary contact must contain 10–15 digits"
-    )
+
     private String primaryContact;
 
     @Pattern(
