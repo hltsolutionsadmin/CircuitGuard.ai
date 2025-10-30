@@ -60,4 +60,18 @@ public interface UserAssignmentRepository extends JpaRepository<UserAssignmentMo
     );
 
     boolean existsByUserId(Long id);
+
+    @Query("""
+        SELECT DISTINCT ua
+        FROM UserAssignmentModel ua
+        LEFT JOIN ua.roles r
+        WHERE ua.targetId = :targetId
+          AND ua.targetType = :targetType
+          AND (r IS NULL OR r NOT IN ('CLIENT_ADMIN', 'CLIENT_USER', 'CLIENT_VIEWER', 'CLIENT_MANAGER'))
+        """)
+    Page<UserAssignmentModel> findNonClientAssignmentsByTarget(
+            @Param("targetId") Long targetId,
+            @Param("targetType") AssignmentTargetType targetType,
+            Pageable pageable
+    );
 }

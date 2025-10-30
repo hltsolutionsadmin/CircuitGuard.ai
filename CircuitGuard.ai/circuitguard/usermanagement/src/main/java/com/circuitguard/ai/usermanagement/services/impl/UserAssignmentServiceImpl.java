@@ -243,14 +243,23 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
     }
 
     @Override
-    public Page<UserAssignmentDTO> getAssignmentsByTarget(AssignmentTargetType targetType, Long targetId, Pageable pageable) {
-        Page<UserAssignmentModel> page = userAssignmentRepository.findByTargetIdAndTargetType(targetId, targetType, pageable);
+    public Page<UserAssignmentDTO> getAssignmentsByTarget(
+            AssignmentTargetType targetType,
+            Long targetId,
+            Pageable pageable,
+            boolean includeClientDetails
+    ) {
+        Page<UserAssignmentModel> page = includeClientDetails
+                ? userAssignmentRepository.findByTargetIdAndTargetType(targetId, targetType, pageable)
+                : userAssignmentRepository.findNonClientAssignmentsByTarget(targetId, targetType, pageable);
+
         return page.map(assignment -> {
             UserAssignmentDTO dto = new UserAssignmentDTO();
             userAssignmentPopulator.populate(assignment, dto);
             return dto;
         });
     }
+
 
     @Override
     public Page<UserAssignmentDTO> getAssignmentsByUser(Long userId, Pageable pageable) {

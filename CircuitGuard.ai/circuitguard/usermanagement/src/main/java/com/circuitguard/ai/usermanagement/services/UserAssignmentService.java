@@ -20,7 +20,7 @@ public interface UserAssignmentService {
 
     UserAssignmentDTO getAssignmentById(Long assignmentId);
 
-    Page<UserAssignmentDTO> getAssignmentsByTarget(AssignmentTargetType targetType, Long targetId, Pageable pageable);
+    Page<UserAssignmentDTO> getAssignmentsByTarget(AssignmentTargetType targetType, Long targetId, Pageable pageable, boolean includeClientDetails);
 
     Page<UserAssignmentDTO> getAssignmentsByUser(Long userId, Pageable pageable);
 

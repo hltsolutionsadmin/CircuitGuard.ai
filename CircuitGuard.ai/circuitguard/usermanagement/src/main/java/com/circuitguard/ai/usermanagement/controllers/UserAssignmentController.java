@@ -46,10 +46,11 @@ public class UserAssignmentController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "ASC") Sort.Direction direction
+            @RequestParam(defaultValue = "ASC") Sort.Direction direction,
+             @RequestParam(defaultValue = "false") boolean includeClientDetails
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        Page<UserAssignmentDTO> result = userAssignmentService.getAssignmentsByTarget(targetType, targetId, pageable);
+        Page<UserAssignmentDTO> result = userAssignmentService.getAssignmentsByTarget(targetType, targetId, pageable, includeClientDetails);
         return ResponseEntity.ok(StandardResponse.page("Assignments fetched successfully", result));
     }
 
