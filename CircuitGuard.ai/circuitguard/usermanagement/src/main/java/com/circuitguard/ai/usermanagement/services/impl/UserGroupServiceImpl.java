@@ -33,8 +33,9 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Override
     @Transactional
     public UserGroupDTO create(UserGroupDTO dto) {
-        validateDuplicateGroup(dto.getGroupName());
+//        validateDuplicateGroup(dto.getGroupName());
 
+        validateDuplicateGroup(dto.getGroupName(), dto.getProject().getId());
         ProjectModel project = fetchProject(dto.getProject());
         UserModel groupLead = resolveGroupLead(dto);
 
@@ -110,8 +111,8 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
 
-    private void validateDuplicateGroup(String groupName) {
-        if (userGroupRepository.existsByGroupNameIgnoreCase(groupName)) {
+    private void validateDuplicateGroup(String groupName, Long projectId) {
+        if (userGroupRepository.existsByProject_IdAndGroupNameIgnoreCase(projectId, groupName)) {
             throw new HltCustomerException(ErrorCode.DUPLICATE_GROUP_NAME);
         }
     }

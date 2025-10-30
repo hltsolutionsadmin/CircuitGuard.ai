@@ -16,4 +16,7 @@ public interface UserGroupRepository extends JpaRepository<UserGroupModel, Long>
 
     Optional<UserGroupModel> findByProjectId(Long projectId);
     Page<UserGroupModel> findByProjectId(Long projectId, Pageable pageable);
+
+    boolean existsByProject_IdAndGroupNameIgnoreCase(Long projectId, String groupName);
+
 }
