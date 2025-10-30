@@ -18,7 +18,7 @@ import java.util.Optional;
 @Repository
 public interface ProjectRepository extends JpaRepository<ProjectModel, Long>, JpaSpecificationExecutor<ProjectModel> {
 
-    Page<ProjectModel> findByIdAndStatus(Long projectId, ProjectStatus status, Pageable pageable);
+    Page<ProjectModel> findByOwnerOrganization_IdAndStatus(Long organisationId, ProjectStatus status, Pageable pageable);
 
     Page<ProjectModel> findByClientId(Long clientId, Pageable pageable);
 

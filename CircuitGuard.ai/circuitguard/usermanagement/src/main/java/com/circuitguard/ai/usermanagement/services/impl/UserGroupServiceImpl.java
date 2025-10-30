@@ -33,9 +33,12 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Override
     @Transactional
     public UserGroupDTO create(UserGroupDTO dto) {
-//        validateDuplicateGroup(dto.getGroupName());
 
         validateDuplicateGroup(dto.getGroupName(), dto.getProject().getId());
+        boolean exists = userGroupRepository.existsByPriorityAndProject_Id(dto.getPriority(),dto.getProject().getId());
+        if (exists) {
+            throw new HltCustomerException(ErrorCode.GROUP_ALREADY_EXISTS_FOR_PRIORITY);
+        }
         ProjectModel project = fetchProject(dto.getProject());
         UserModel groupLead = resolveGroupLead(dto);
 

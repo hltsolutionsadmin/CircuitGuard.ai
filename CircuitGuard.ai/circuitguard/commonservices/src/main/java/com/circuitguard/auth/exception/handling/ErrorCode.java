@@ -23,6 +23,7 @@ public enum ErrorCode {
 
     ORGANIZATION_NOT_FOUND(1005, "Organization not found", HttpStatus.NOT_FOUND),
     CLIENT_ORGANIZATION_NOT_FOUND(1006, "Client organization not found", HttpStatus.NOT_FOUND),
+    GROUP_ALREADY_EXISTS_FOR_PRIORITY(1012, "Group already exists for this priority in the project", HttpStatus.CONFLICT),
 
     USER_NOT_FOUND(1000, "User Not Found", HttpStatus.NOT_FOUND),
     SKILL_NOT_FOUND(2001, "Skill not found", HttpStatus.NOT_FOUND),

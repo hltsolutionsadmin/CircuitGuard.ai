@@ -156,7 +156,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
 
-    private Page<ProjectModel> fetchProjectsWithFilter(Pageable pageable, Long projectId, Long clientId, Long managerId, String statusStr) {
+    private Page<ProjectModel> fetchProjectsWithFilter(Pageable pageable, Long organisationId, Long clientId, Long managerId, String statusStr) {
         ProjectStatus status = null;
         if (statusStr != null) {
             try {
@@ -180,7 +180,7 @@ public class ProjectServiceImpl implements ProjectService {
         } else if (managerId != null) {
             return projectRepository.findByProjectManagerId(managerId, pageable);
         } else if (status != null) {
-            return projectRepository.findByIdAndStatus(projectId,status, pageable);
+            return projectRepository.findByOwnerOrganization_IdAndStatus(organisationId,status, pageable);
         } else {
             return projectRepository.findAll(pageable);
         }

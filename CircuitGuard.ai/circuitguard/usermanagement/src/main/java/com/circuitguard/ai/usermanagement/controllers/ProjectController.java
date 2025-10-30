@@ -33,12 +33,12 @@ public class ProjectController {
     @GetMapping
     public StandardResponse<Page<ProjectDTO>> getAllProjects(
             Pageable pageable,
-            @RequestParam(required = false) Long projectId,
+            @RequestParam(required = false) Long organisationId,
             @RequestParam(required = false) Long clientId,
             @RequestParam(required = false) Long managerId,
             @RequestParam(required = false) String status
     ) {
-        Page<ProjectDTO> projects = projectService.fetchProjectsWithFilters(pageable, projectId, clientId, managerId, status);
+        Page<ProjectDTO> projects = projectService.fetchProjectsWithFilters(pageable, organisationId, clientId, managerId, status);
         return StandardResponse.page("Projects fetched successfully", projects);
     }
 
