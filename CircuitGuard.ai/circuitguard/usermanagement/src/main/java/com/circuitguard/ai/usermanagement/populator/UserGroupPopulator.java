@@ -27,6 +27,7 @@ public class UserGroupPopulator implements Populator<UserGroupModel, UserGroupDT
         target.setId(source.getId());
         target.setGroupName(source.getGroupName());
         target.setDescription(source.getDescription());
+        target.setPriority(source.getPriority());
 
         if (source.getProject() != null) {
             ProjectDTO projectDTO = new ProjectDTO();

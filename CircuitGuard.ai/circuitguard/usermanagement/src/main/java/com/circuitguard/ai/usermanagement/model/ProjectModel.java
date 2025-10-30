@@ -28,7 +28,7 @@ public class ProjectModel extends GenericModel {
     @EqualsAndHashCode.Include
     private String name;
 
-    @Column(name = "PROJECT_CODE",unique = true, length = 10)
+    @Column(name = "PROJECT_CODE", unique = true, length = 10)
     private String projectCode;
 
     @Column(name = "DESCRIPTION", length = 2000)
@@ -98,4 +98,5 @@ public class ProjectModel extends GenericModel {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserGroupModel> userGroups = new ArrayList<>();
+
 }

@@ -1,5 +1,6 @@
 package com.circuitguard.ai.usermanagement.model;
 
+import com.circuitguard.ai.usermanagement.dto.enums.TicketPriority;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +28,10 @@ public class UserGroupModel extends GenericModel {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "GROUP_LEAD_ID")
     private UserModel groupLead;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PRIORITY", nullable = false)
+    private TicketPriority priority;
 
 
 }

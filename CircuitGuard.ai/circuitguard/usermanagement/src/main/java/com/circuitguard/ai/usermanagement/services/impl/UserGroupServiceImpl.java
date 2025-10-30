@@ -43,6 +43,7 @@ public class UserGroupServiceImpl implements UserGroupService {
                 .groupName(dto.getGroupName())
                 .description(dto.getDescription())
                 .project(project)
+                .priority(dto.getPriority())
                 .groupLead(groupLead)
                 .build();
 
@@ -62,6 +63,10 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         if (dto.getDescription() != null) {
             model.setDescription(dto.getDescription());
+        }
+
+        if (dto.getPriority() != null) {
+            model.setPriority(dto.getPriority());
         }
 
         if (dto.getProject() != null && dto.getProject().getId() != null) {

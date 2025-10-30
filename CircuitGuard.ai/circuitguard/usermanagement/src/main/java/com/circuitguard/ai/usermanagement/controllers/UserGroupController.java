@@ -22,7 +22,6 @@ public class UserGroupController {
         return StandardResponse.single("User group created successfully", createdGroup);
     }
 
-
     @PutMapping("/{id}")
     public StandardResponse<UserGroupDTO> update(@PathVariable Long id, @Valid @RequestBody UserGroupDTO dto) {
         UserGroupDTO updatedGroup = userGroupService.update(id, dto);

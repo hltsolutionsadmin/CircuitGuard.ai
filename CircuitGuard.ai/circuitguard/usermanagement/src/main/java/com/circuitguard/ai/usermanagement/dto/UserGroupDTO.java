@@ -1,5 +1,6 @@
 package com.circuitguard.ai.usermanagement.dto;
 
+import com.circuitguard.ai.usermanagement.dto.enums.TicketPriority;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -20,4 +21,6 @@ public class UserGroupDTO {
     private ProjectDTO project;
 
     private UserDTO groupLead;
+
+    private TicketPriority priority;
 }
