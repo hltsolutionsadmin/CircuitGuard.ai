@@ -11,7 +11,7 @@ public interface ProjectService {
 
     ProjectDTO getProjectById(Long projectId);
 
-    Page<ProjectDTO> getAllProjects(Pageable pageable, Long clientId, Long managerId, String status);
+    Page<ProjectDTO> fetchProjectsWithFilters(Pageable pageable, Long projectId, Long clientId, Long managerId, String statusStr);
 
     void deleteProject(Long projectId);
 

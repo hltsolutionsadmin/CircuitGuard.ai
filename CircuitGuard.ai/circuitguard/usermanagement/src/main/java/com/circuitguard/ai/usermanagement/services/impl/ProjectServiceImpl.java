@@ -74,13 +74,14 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<ProjectDTO> getAllProjects(Pageable pageable, Long clientId, Long managerId, String status) {
-        Page<ProjectModel> page = fetchProjectsWithFilters(pageable, clientId, managerId, status);
+    public Page<ProjectDTO> fetchProjectsWithFilters(Pageable pageable, Long projectId, Long clientId, Long managerId, String status) {
+        Page<ProjectModel> page = fetchProjectsWithFilter(pageable, projectId, clientId, managerId, status);
         List<ProjectDTO> dtos = page.getContent().stream()
                 .map(projectPopulator::toDTO)
                 .collect(Collectors.toList());
         return new PageImpl<>(dtos, pageable, page.getTotalElements());
     }
+
 
     @Override
     public void deleteProject(Long projectId) {
@@ -155,7 +156,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
 
-    private Page<ProjectModel> fetchProjectsWithFilters(Pageable pageable, Long clientId, Long managerId, String statusStr) {
+    private Page<ProjectModel> fetchProjectsWithFilter(Pageable pageable, Long projectId, Long clientId, Long managerId, String statusStr) {
         ProjectStatus status = null;
         if (statusStr != null) {
             try {
@@ -179,7 +180,7 @@ public class ProjectServiceImpl implements ProjectService {
         } else if (managerId != null) {
             return projectRepository.findByProjectManagerId(managerId, pageable);
         } else if (status != null) {
-            return projectRepository.findByStatus(status, pageable);
+            return projectRepository.findByIdAndStatus(projectId,status, pageable);
         } else {
             return projectRepository.findAll(pageable);
         }
