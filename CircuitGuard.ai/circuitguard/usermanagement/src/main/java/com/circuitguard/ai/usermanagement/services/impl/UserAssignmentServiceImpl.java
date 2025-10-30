@@ -201,7 +201,7 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
                 .orElseThrow(() -> new HltCustomerException(ErrorCode.ASSIGNMENT_NOT_FOUND));
         assignment.getGroups().clear();
         assignment.getRoles().clear();
-        userAssignmentRepository.save(assignment);
+        userAssignmentRepository.delete(assignment);
     }
 
     @Override
