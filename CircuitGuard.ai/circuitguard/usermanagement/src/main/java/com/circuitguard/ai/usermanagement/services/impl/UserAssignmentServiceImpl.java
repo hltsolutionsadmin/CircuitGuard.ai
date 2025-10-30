@@ -7,10 +7,7 @@ import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.model.*;
 import com.circuitguard.ai.usermanagement.populator.UserAssignmentPopulator;
 import com.circuitguard.ai.usermanagement.populator.UserPopulator;
-import com.circuitguard.ai.usermanagement.repository.OrganizationRepository;
-import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
-import com.circuitguard.ai.usermanagement.repository.UserAssignmentRepository;
-import com.circuitguard.ai.usermanagement.repository.UserGroupRepository;
+import com.circuitguard.ai.usermanagement.repository.*;
 import com.circuitguard.ai.usermanagement.services.UserAssignmentService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
@@ -39,6 +36,7 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
     private final RoleServiceImpl roleService;
     private final UserServiceImpl userService;
     private final UserPopulator userPopulator;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -196,12 +194,22 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
     }
 
     @Override
+    @Transactional
     public void removeAssignment(Long assignmentId) {
         UserAssignmentModel assignment = userAssignmentRepository.findById(assignmentId)
                 .orElseThrow(() -> new HltCustomerException(ErrorCode.ASSIGNMENT_NOT_FOUND));
+
+        UserModel user = assignment.getUser();
+
         assignment.getGroups().clear();
         assignment.getRoles().clear();
+
         userAssignmentRepository.delete(assignment);
+
+        boolean hasOtherAssignments = userAssignmentRepository.existsByUserId(user.getId());
+        if (!hasOtherAssignments) {
+            userRepository.delete(user);
+        }
     }
 
     @Override

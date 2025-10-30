@@ -57,4 +57,7 @@ public interface UserAssignmentRepository extends JpaRepository<UserAssignmentMo
             @Param("targetId") Long targetId,
             @Param("roles") java.util.Set<AssignmentRole> roles,
             Pageable pageable
-    );}
+    );
+
+    boolean existsByUserId(Long id);
+}
