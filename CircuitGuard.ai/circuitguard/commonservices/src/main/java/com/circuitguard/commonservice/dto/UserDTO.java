@@ -69,4 +69,7 @@ public class UserDTO {
     private Long currentYear;
     private String password;
     private Boolean profileCompleted;
+
+    // Assignment roles aggregated across the user's active assignments
+    private Set<String> assignmentRoles;
 }

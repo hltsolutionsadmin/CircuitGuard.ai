@@ -21,6 +21,9 @@ public interface UserAssignmentRepository extends JpaRepository<UserAssignmentMo
 
     Page<UserAssignmentModel> findByUserId(Long userId, Pageable pageable);
 
+    // Fetch all active assignments for a user (no pagination)
+    java.util.List<UserAssignmentModel> findByUser_IdAndActiveTrue(Long userId);
+
     Optional<UserAssignmentModel> findByUser_IdAndTargetTypeAndTargetId(
             Long userId,
             AssignmentTargetType targetType,

@@ -2,7 +2,6 @@ package com.circuitguard.ai.usermanagement.controllers;
 
 import com.circuitguard.ai.usermanagement.dto.AssignmentStatusUpdateRequest;
 import com.circuitguard.ai.usermanagement.dto.UserAssignmentDTO;
-import com.circuitguard.ai.usermanagement.dto.UserDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole;
 import com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType;
 import com.circuitguard.ai.usermanagement.services.UserAssignmentService;

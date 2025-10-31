@@ -1,22 +1,19 @@
 package com.circuitguard.ai.usermanagement.services.impl;
 
-import com.circuitguard.ai.usermanagement.model.MediaModel;
-import com.circuitguard.ai.usermanagement.model.OrganizationModel;
-import com.circuitguard.ai.usermanagement.model.RoleModel;
-import com.circuitguard.ai.usermanagement.model.UserModel;
-import com.circuitguard.commonservice.dto.*;
+import com.circuitguard.ai.usermanagement.dto.UserUpdateDTO;
+import com.circuitguard.ai.usermanagement.model.*;
+import com.circuitguard.ai.usermanagement.repository.MediaRepository;
+import com.circuitguard.ai.usermanagement.repository.RoleRepository;
+import com.circuitguard.ai.usermanagement.repository.UserAssignmentRepository;
+import com.circuitguard.ai.usermanagement.repository.UserRepository;
+import com.circuitguard.ai.usermanagement.services.UserService;
 import com.circuitguard.auth.UserServiceAdapter;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
+import com.circuitguard.commonservice.dto.*;
 import com.circuitguard.commonservice.enums.ERole;
 import com.circuitguard.commonservice.user.UserDetailsImpl;
-import com.circuitguard.ai.usermanagement.dto.UserUpdateDTO;
-import com.circuitguard.ai.usermanagement.repository.MediaRepository;
-import com.circuitguard.ai.usermanagement.repository.RoleRepository;
-import com.circuitguard.ai.usermanagement.repository.UserRepository;
-import com.circuitguard.ai.usermanagement.services.UserService;
 import com.circuitguard.utils.SecurityUtils;
-
 import io.micrometer.common.util.StringUtils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotBlank;
@@ -40,6 +37,7 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
     private final CaffeineCacheManager cacheManager;
     private final MediaRepository mediaRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserAssignmentRepository userAssignmentRepository;
 
     @Override
     public UserModel saveUser(UserModel userModel) {
@@ -127,20 +125,48 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
         saveUser(user);
     }
 
+
     @Override
     @Transactional
     public UserDTO getUserById(Long userId) {
         UserModel user = getUserByIdOrThrow(userId);
+
         UserDTO dto = convertToUserDto(user);
 
-        List<MediaDTO> mediaList = mediaRepository.findByCustomerId(userId)
-                .stream()
+        List<MediaDTO> mediaList = mediaRepository.findByCustomerId(userId).stream()
                 .map(this::convertToMediaDto)
                 .toList();
         dto.setMedia(mediaList);
 
+        loadUserAssignmentRoles(userId, dto);
+
         return dto;
     }
+
+
+    private void loadUserAssignmentRoles(Long userId, UserDTO dto) {
+        try {
+            List<UserAssignmentModel> assignments =
+                    userAssignmentRepository.findByUser_IdAndActiveTrue(userId);
+
+            if (assignments == null || assignments.isEmpty()) {
+                return;
+            }
+
+            Set<String> assignmentRoles = assignments.stream()
+                    .filter(a -> a.getRoles() != null && !a.getRoles().isEmpty())
+                    .flatMap(a -> a.getRoles().stream())
+                    .map(Enum::name)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+
+            if (!assignmentRoles.isEmpty()) {
+                dto.setAssignmentRoles(assignmentRoles);
+            }
+        } catch (Exception ex) {
+            log.warn("Failed to load assignment roles for user {}: {}", userId, ex.getMessage());
+        }
+    }
+
 
     @Override
     public UserModel findById(Long userId) {
