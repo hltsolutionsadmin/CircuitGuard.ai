@@ -332,14 +332,18 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<UserDTO> getUsersByGroup(Long groupId, Pageable pageable) {
-        Page<UserModel> userPage = userAssignmentRepository.findUsersByGroupId(groupId, pageable);
+    public Page<UserAssignmentDTO> getAssignmentsByGroup(Long groupId, Pageable pageable) {
+        Page<UserAssignmentModel> assignmentPage = userAssignmentRepository.findAssignmentsByGroupId(groupId, pageable);
 
-        if (userPage.isEmpty()) {
-            throw new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND, "No users found for the given group");
+        if (assignmentPage.isEmpty()) {
+            throw new HltCustomerException(ErrorCode.BUSINESS_NOT_FOUND, "No user assignments found for the given group");
         }
 
-        return userPage.map(user -> userPopulator.toDTO(user));
+        return assignmentPage.map(assignment -> {
+            UserAssignmentDTO dto = new UserAssignmentDTO();
+            userAssignmentPopulator.populate(assignment, dto);
+            return dto;
+        });
     }
 
 

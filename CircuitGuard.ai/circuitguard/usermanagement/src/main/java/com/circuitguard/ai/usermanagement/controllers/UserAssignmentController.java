@@ -96,6 +96,7 @@ public class UserAssignmentController {
         userAssignmentService.removeAssignment(id);
         return ResponseEntity.ok(StandardResponse.message("User assignment removed successfully"));
     }
+
     @PutMapping("/{id}/status")
     public ResponseEntity<StandardResponse<Void>> updateAssignmentStatus(
             @PathVariable Long id,
@@ -111,7 +112,7 @@ public class UserAssignmentController {
     }
 
     @GetMapping("/{groupId}/users")
-    public ResponseEntity<StandardResponse<Page<UserDTO>>> getUsersByGroup(
+    public ResponseEntity<StandardResponse<Page<UserAssignmentDTO>>> getUsersByGroup(
             @PathVariable Long groupId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -119,7 +120,7 @@ public class UserAssignmentController {
             @RequestParam(defaultValue = "ASC") Sort.Direction direction
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        Page<UserDTO> result = userAssignmentService.getUsersByGroup(groupId, pageable);
+        Page<UserAssignmentDTO> result = userAssignmentService.getAssignmentsByGroup(groupId, pageable);
         return ResponseEntity.ok(StandardResponse.page("Users fetched successfully", result));
     }
 

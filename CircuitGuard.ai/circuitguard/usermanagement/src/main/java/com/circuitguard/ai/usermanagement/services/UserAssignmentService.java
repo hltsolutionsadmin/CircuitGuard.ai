@@ -27,7 +27,7 @@ public interface UserAssignmentService {
 
     Page<UserAssignmentDTO> getAllAssignments(Pageable pageable);
 
-    Page<UserDTO> getUsersByGroup(Long groupId, Pageable pageable);
+    Page<UserAssignmentDTO> getAssignmentsByGroup(Long groupId, Pageable pageable);
 
     Page<UserAssignmentDTO> getAssignmentsByTargetAndRoles(
             AssignmentTargetType targetType,
