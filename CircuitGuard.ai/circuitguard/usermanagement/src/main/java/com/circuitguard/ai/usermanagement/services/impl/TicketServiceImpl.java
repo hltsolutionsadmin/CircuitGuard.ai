@@ -59,6 +59,7 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TicketDTO getTicketById(Long ticketId) {
         TicketModel model = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new HltCustomerException(ErrorCode.TICKET_NOT_FOUND));
@@ -66,14 +67,10 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<TicketDTO> getAllTickets(Pageable pageable, Long projectId, String statusStr, String priorityStr) {
         Page<TicketModel> tickets = fetchTicketsWithFilters(pageable, projectId, statusStr, priorityStr);
-
-        List<TicketDTO> dtoList = tickets.getContent().stream()
-                .map(ticketPopulator::toDTO)
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(dtoList, pageable, tickets.getTotalElements());
+        return tickets.map(ticketPopulator::toDTO);
     }
 
     @Override
@@ -88,10 +85,14 @@ public class TicketServiceImpl implements TicketService {
         TicketModel ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new HltCustomerException(ErrorCode.TICKET_NOT_FOUND));
 
-        UserModel createdBy = commentDTO.getCreatedById() != null
-                ? userRepository.findById(SecurityUtils.getCurrentUserDetails().getId())
-                .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND))
-                : null;
+        UserModel createdBy = null;
+        if (commentDTO.getCreatedById() != null) {
+            createdBy = userRepository.findById(commentDTO.getCreatedById())
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
+        } else if (SecurityUtils.getCurrentUserDetails() != null) {
+            createdBy = userRepository.findById(SecurityUtils.getCurrentUserDetails().getId())
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
+        }
 
         TicketCommentModel comment = new TicketCommentModel();
         comment.setTicket(ticket);
@@ -242,10 +243,14 @@ public class TicketServiceImpl implements TicketService {
     private void generateTicketIdIfNew(TicketModel model) {
         if (model.getId() != null) return;
 
+        if (model.getProject() == null || model.getProject().getId() == null) {
+            throw new HltCustomerException(ErrorCode.PROJECT_NOT_FOUND);
+        }
         Long projectId = model.getProject().getId();
 
         Long lastNumber = ticketRepository.getLastTicketNumberByProject(projectId);
-        Long nextNumber = lastNumber + 1;
+        long last = lastNumber == null ? 0L : lastNumber;
+        Long nextNumber = last + 1;
 
         String projectKey = getProjectKey(model.getProject());
         String ticketId = projectKey + "-" + nextNumber;
@@ -256,9 +261,14 @@ public class TicketServiceImpl implements TicketService {
 
     private String getProjectKey(ProjectModel project) {
         String name = project.getName();
-        return name.replaceAll("[^A-Za-z]", "")
-                .substring(0, Math.min(4, name.length()))
-                .toUpperCase();
+        if (name == null) {
+            return "PRJ";
+        }
+        String cleaned = name.replaceAll("[^A-Za-z]", "");
+        if (cleaned.isEmpty()) {
+            return "PRJ";
+        }
+        return cleaned.substring(0, Math.min(4, cleaned.length())).toUpperCase();
     }
 
 

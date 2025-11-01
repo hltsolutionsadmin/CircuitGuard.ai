@@ -37,24 +37,24 @@ public interface UserAssignmentRepository extends JpaRepository<UserAssignmentMo
 
 
     @Query("""
-                SELECT DISTINCT ua
-    FROM UserAssignmentModel ua
-    JOIN ua.groups g
-                JOIN FETCH ua.user u
-    WHERE g.id = :groupId
-      AND ua.active = true
-""")
+                            SELECT DISTINCT ua
+                FROM UserAssignmentModel ua
+                JOIN ua.groups g
+                            JOIN FETCH ua.user u
+                WHERE g.id = :groupId
+                  AND ua.active = true
+            """)
     Page<UserAssignmentModel> findAssignmentsByGroupId(@Param("groupId") Long groupId, Pageable pageable);
 
 
     @Query("""
-        SELECT ua FROM UserAssignmentModel ua 
-        JOIN ua.roles r
-        WHERE ua.targetType = :targetType 
-          AND ua.targetId = :targetId 
-          AND ua.active = true
-          AND r IN :roles
-    """)
+                SELECT ua FROM UserAssignmentModel ua 
+                JOIN ua.roles r
+                WHERE ua.targetType = :targetType 
+                  AND ua.targetId = :targetId 
+                  AND ua.active = true
+                  AND r IN :roles
+            """)
     Page<UserAssignmentModel> findByTargetAndRoles(
             @Param("targetType") AssignmentTargetType targetType,
             @Param("targetId") Long targetId,
@@ -65,13 +65,18 @@ public interface UserAssignmentRepository extends JpaRepository<UserAssignmentMo
     boolean existsByUserId(Long id);
 
     @Query("""
-        SELECT DISTINCT ua
-        FROM UserAssignmentModel ua
-        LEFT JOIN ua.roles r
-        WHERE ua.targetId = :targetId
-          AND ua.targetType = :targetType
-          AND (r IS NULL OR r NOT IN ('CLIENT_ADMIN', 'CLIENT_USER', 'CLIENT_VIEWER', 'CLIENT_MANAGER'))
-        """)
+                SELECT DISTINCT ua
+                FROM UserAssignmentModel ua
+                LEFT JOIN ua.roles r
+                WHERE ua.targetId = :targetId
+                  AND ua.targetType = :targetType
+                  AND (r IS NULL OR r NOT IN (
+                      com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole.CLIENT_ADMIN,
+                      com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole.CLIENT_USER,
+                      com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole.CLIENT_VIEWER,
+                      com.circuitguard.ai.usermanagement.dto.enums.AssignmentRole.CLIENT_MANAGER
+                  ))
+            """)
     Page<UserAssignmentModel> findNonClientAssignmentsByTarget(
             @Param("targetId") Long targetId,
             @Param("targetType") AssignmentTargetType targetType,

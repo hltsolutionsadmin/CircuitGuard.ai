@@ -1,0 +1,74 @@
+services:
+  registry:
+    build:
+      context: ./circuitguard
+      dockerfile: registry/Dockerfile
+    container_name: registry
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/circuitguard?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=appuser
+      - SPRING_DATASOURCE_PASSWORD=apppassword
+    networks:
+      - charaka-network
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=circuitguard
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppassword
+    ports:
+      - "3306:3306"
+    networks:
+      - charaka-network
+
+  user-management:
+    build:
+      context: ./circuitguard
+      dockerfile: usermanagement/Dockerfile
+    container_name: user-management
+    ports:
+      - "9010:9010"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/circuitguard?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=appuser
+      - SPRING_DATASOURCE_PASSWORD=apppassword
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry:8761/eureka
+    depends_on:
+      registry:
+        condition: service_started
+      mysql:
+        condition: service_started
+    networks:
+      - charaka-network
+
+  api-gateway:
+    build:
+      context: ./circuitguard
+      dockerfile: apigateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "9443:9443"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://registry:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/circuitguard?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=appuser
+      - SPRING_DATASOURCE_PASSWORD=apppassword
+    depends_on:
+      registry:
+        condition: service_started
+      user-management:
+        condition: service_started
+    networks:
+      - charaka-network
+
+networks:
+  charaka-network:
+    driver: bridge
