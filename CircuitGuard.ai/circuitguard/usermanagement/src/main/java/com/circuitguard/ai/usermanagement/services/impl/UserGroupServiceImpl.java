@@ -34,16 +34,23 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Transactional
     public UserGroupDTO create(UserGroupDTO dto) {
 
-        validateDuplicateGroup(dto.getGroupName(), dto.getProject().getId());
-        boolean exists = userGroupRepository.existsByPriorityAndProject_Id(dto.getPriority(),dto.getProject().getId());
+        ProjectModel project = fetchProject(dto.getProject());
+
+        String groupName = dto.getGroupName() == null ? null : dto.getGroupName().trim();
+        if (groupName == null || groupName.isEmpty()) {
+            throw new HltCustomerException(ErrorCode.DUPLICATE_GROUP_NAME); // using existing codebase error set
+        }
+
+        validateDuplicateGroup(groupName, project.getId());
+        boolean exists = userGroupRepository.existsByPriorityAndProject_Id(dto.getPriority(), project.getId());
         if (exists) {
             throw new HltCustomerException(ErrorCode.GROUP_ALREADY_EXISTS_FOR_PRIORITY);
         }
-        ProjectModel project = fetchProject(dto.getProject());
+
         UserModel groupLead = resolveGroupLead(dto);
 
         UserGroupModel model = UserGroupModel.builder()
-                .groupName(dto.getGroupName())
+                .groupName(groupName)
                 .description(dto.getDescription())
                 .project(project)
                 .priority(dto.getPriority())
@@ -60,29 +67,56 @@ public class UserGroupServiceImpl implements UserGroupService {
     public UserGroupDTO update(Long id, UserGroupDTO dto) {
         UserGroupModel model = findGroupById(id);
 
-        if (dto.getGroupName() != null && !dto.getGroupName().isBlank()) {
-            model.setGroupName(dto.getGroupName());
-        }
+        boolean changed = false;
 
-        if (dto.getDescription() != null) {
-            model.setDescription(dto.getDescription());
-        }
-
-        if (dto.getPriority() != null) {
-            model.setPriority(dto.getPriority());
-        }
-
-        if (dto.getProject() != null && dto.getProject().getId() != null) {
+        if (dto.getProject() != null && dto.getProject().getId() != null
+                && (model.getProject() == null || !dto.getProject().getId().equals(model.getProject().getId()))) {
             ProjectModel project = fetchProject(dto.getProject());
             model.setProject(project);
+            changed = true;
         }
 
-        if (dto.getGroupLead() != null && dto.getGroupLead().getId() != null) {
+        if (dto.getGroupName() != null) {
+            String newName = dto.getGroupName().trim();
+            if (!newName.isEmpty() && !newName.equals(model.getGroupName())) {
+                Long projectIdForValidation = model.getProject() != null ? model.getProject().getId() : null;
+                if (projectIdForValidation == null) {
+                    throw new HltCustomerException(ErrorCode.INVALID_PROJECT_REFERENCE);
+                }
+                validateDuplicateGroup(newName, projectIdForValidation);
+                model.setGroupName(newName);
+                changed = true;
+            }
+        }
+
+        if (dto.getDescription() != null && !dto.getDescription().equals(model.getDescription())) {
+            model.setDescription(dto.getDescription());
+            changed = true;
+        }
+
+        if (dto.getPriority() != null && dto.getPriority() != model.getPriority()) {
+            Long projectIdForPriority = model.getProject() != null ? model.getProject().getId() : null;
+            if (projectIdForPriority == null) {
+                throw new HltCustomerException(ErrorCode.INVALID_PROJECT_REFERENCE);
+            }
+            boolean exists = userGroupRepository.existsByPriorityAndProject_Id(dto.getPriority(), projectIdForPriority);
+            if (exists) {
+                throw new HltCustomerException(ErrorCode.GROUP_ALREADY_EXISTS_FOR_PRIORITY);
+            }
+            model.setPriority(dto.getPriority());
+            changed = true;
+        }
+
+        if (dto.getGroupLead() != null && dto.getGroupLead().getId() != null
+                && (model.getGroupLead() == null || !dto.getGroupLead().getId().equals(model.getGroupLead().getId()))) {
             UserModel groupLead = resolveGroupLead(dto);
             model.setGroupLead(groupLead);
+            changed = true;
         }
 
-        userGroupRepository.save(model);
+        if (changed) {
+            userGroupRepository.save(model);
+        }
         return userGroupPopulator.toDTO(model);
     }
 

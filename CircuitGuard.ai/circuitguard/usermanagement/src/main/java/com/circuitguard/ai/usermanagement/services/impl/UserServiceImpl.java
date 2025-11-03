@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
 
 
     @Override
-    @Transactional
+    @Transactional(Transactional.TxType.SUPPORTS)
     public UserDTO getUserById(Long userId) {
         UserModel user = getUserByIdOrThrow(userId);
 
@@ -169,16 +169,19 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
 
 
     @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
     public UserModel findById(Long userId) {
         return userRepository.findById(userId).orElse(null);
     }
 
     @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
     public List<UserModel> findByIds(List<Long> ids) {
         return userRepository.findAllById(ids);
     }
 
     @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
     public UserModel findByEmail(String email) {
         if (StringUtils.isEmpty(email)) {
             return null;
@@ -190,13 +193,19 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
 
 
     @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
     public Optional<UserModel> findByPrimaryContact(String primaryContact) {
-        return userRepository.findByPrimaryContactHash(DigestUtils.sha256Hex(primaryContact));
+        if (StringUtils.isEmpty(primaryContact)) {
+            return Optional.empty();
+        }
+        String normalized = primaryContact.trim();
+        return userRepository.findByPrimaryContactHash(DigestUtils.sha256Hex(normalized));
 
     }
 
 
     @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
     public List<UserDTO> getUsersByRole(String roleName) {
         ERole role = ERole.valueOf(roleName.toUpperCase());
         RoleModel roleModel = getRoleByEnum(role);
@@ -220,6 +229,7 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
 
 
     @Override
+    @Transactional(Transactional.TxType.SUPPORTS)
     public Optional<UserModel> findByUsername(@NotBlank String username) {
         return userRepository.findByUsername(username);
     }
@@ -260,7 +270,9 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
     }
 
     public UserDTO convertToUserDto(UserModel user) {
-        Set<Role> roles = user.getRoles().stream()
+        Set<Role> roles = Optional.ofNullable(user.getRoles())
+                .orElseGet(Collections::emptySet)
+                .stream()
                 .map(role -> new Role(role.getId(), role.getName()))
                 .collect(Collectors.toSet());
 
@@ -292,7 +304,6 @@ public class UserServiceImpl implements UserService, UserServiceAdapter {
                 .profilePicture(profilePicture)
                 .roles(roles)
                 .organization(organizationDTO)
-                .password(user.getPassword())
                 .build();
     }
 
