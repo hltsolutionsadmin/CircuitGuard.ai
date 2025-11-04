@@ -4,6 +4,9 @@ import com.circuitguard.ai.usermanagement.dto.TicketCommentDTO;
 import com.circuitguard.ai.usermanagement.dto.TicketDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.TicketPriority;
 import com.circuitguard.ai.usermanagement.dto.enums.TicketStatus;
+import com.circuitguard.ai.usermanagement.dto.enums.IssueType;
+import com.circuitguard.ai.usermanagement.dto.enums.Impact;
+import com.circuitguard.ai.usermanagement.dto.enums.Urgency;
 import com.circuitguard.ai.usermanagement.model.*;
 import com.circuitguard.ai.usermanagement.populator.TicketCommentPopulator;
 import com.circuitguard.ai.usermanagement.populator.TicketPopulator;
@@ -12,6 +15,7 @@ import com.circuitguard.ai.usermanagement.services.TicketService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
 import com.circuitguard.utils.SecurityUtils;
+import com.circuitguard.ai.usermanagement.util.PriorityResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -205,7 +209,30 @@ public class TicketServiceImpl implements TicketService {
         if (dto.getPriority() != null) {
             model.setPriority(dto.getPriority());
         } else if (model.getId() == null) {
-            model.setPriority(TicketPriority.LOW);
+            // Auto-calculate priority for new tickets when not provided
+            TicketPriority auto = PriorityResolver.resolve(
+                    dto.getImpact() != null ? dto.getImpact() : Impact.LOW,
+                    dto.getUrgency() != null ? dto.getUrgency() : Urgency.LOW
+            );
+            model.setPriority(auto);
+        }
+
+        if (dto.getIssueType() != null) {
+            model.setIssueType(dto.getIssueType());
+        } else if (model.getId() == null) {
+            model.setIssueType(IssueType.TASK);
+        }
+
+        if (dto.getImpact() != null) {
+            model.setImpact(dto.getImpact());
+        } else if (model.getId() == null) {
+            model.setImpact(Impact.LOW);
+        }
+
+        if (dto.getUrgency() != null) {
+            model.setUrgency(dto.getUrgency());
+        } else if (model.getId() == null) {
+            model.setUrgency(Urgency.LOW);
         }
 
         if (dto.getProjectId() != null) {

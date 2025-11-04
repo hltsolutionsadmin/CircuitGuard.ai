@@ -2,6 +2,9 @@ package com.circuitguard.ai.usermanagement.dto;
 
 import com.circuitguard.ai.usermanagement.dto.enums.TicketPriority;
 import com.circuitguard.ai.usermanagement.dto.enums.TicketStatus;
+import com.circuitguard.ai.usermanagement.dto.enums.IssueType;
+import com.circuitguard.ai.usermanagement.dto.enums.Impact;
+import com.circuitguard.ai.usermanagement.dto.enums.Urgency;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,6 +34,12 @@ public class TicketDTO {
     private TicketPriority priority;
 
     private TicketStatus status;
+
+    private IssueType issueType;
+
+    private Impact impact;
+
+    private Urgency urgency;
 
     private Long projectId;
 
