@@ -255,10 +255,10 @@ public class UserAssignmentServiceImpl implements UserAssignmentService {
 
         userAssignmentRepository.delete(assignment);
 
-        boolean hasOtherAssignments = userAssignmentRepository.existsByUserId(user.getId());
-        if (!hasOtherAssignments) {
-            userRepository.delete(user);
-        }
+//        boolean hasOtherAssignments = userAssignmentRepository.existsByUserId(user.getId());
+//        if (!hasOtherAssignments) {
+//            userRepository.delete(user);
+//        }
     }
 
     @Override
