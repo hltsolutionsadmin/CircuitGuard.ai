@@ -19,7 +19,9 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
             "project",
             "createdBy",
             "assignedTo",
-            "group"
+            "group",
+            "category",
+            "subCategory"
     })
     Page<TicketModel> findAllBy(Pageable pageable);
 
@@ -29,7 +31,9 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
             "project",
             "createdBy",
             "assignedTo",
-            "group"
+            "group",
+            "category",
+            "subCategory"
     })
     Page<TicketModel> findByStatus(TicketStatus status, Pageable pageable);
 
@@ -39,7 +43,9 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
             "project",
             "createdBy",
             "assignedTo",
-            "group"
+            "group",
+            "category",
+            "subCategory"
     })
     Page<TicketModel> findByPriority(TicketPriority priority, Pageable pageable);
 
@@ -49,7 +55,9 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
             "project",
             "createdBy",
             "assignedTo",
-            "group"
+            "group",
+            "category",
+            "subCategory"
     })
     Page<TicketModel> findByProjectId(Long projectId, Pageable pageable);
 
@@ -59,7 +67,9 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
             "project",
             "createdBy",
             "assignedTo",
-            "group"
+            "group",
+            "category",
+            "subCategory"
     })
     Page<TicketModel> findByProjectIdAndStatus(Long projectId, TicketStatus status, Pageable pageable);
 
@@ -69,7 +79,9 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
             "project",
             "createdBy",
             "assignedTo",
-            "group"
+            "group",
+            "category",
+            "subCategory"
     })
     Page<TicketModel> findByProjectIdAndPriority(Long projectId, TicketPriority priority, Pageable pageable);
 
@@ -79,17 +91,21 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
             "project",
             "createdBy",
             "assignedTo",
-            "group"
+            "group",
+            "category",
+            "subCategory"
     })
     Page<TicketModel> findByStatusAndPriority(TicketStatus status, TicketPriority priority, Pageable pageable);
 
     @EntityGraph(attributePaths = {
-            "comments",
-            "comments.createdBy",
-            "project",
-            "createdBy",
-            "assignedTo",
-            "group"
+          "comments",
+          "comments.createdBy",
+          "project",
+          "createdBy",
+          "assignedTo",
+          "group",
+          "category",
+          "subCategory"
     })
     Page<TicketModel> findByProjectIdAndStatusAndPriority(Long projectId, TicketStatus status, TicketPriority priority, Pageable pageable);
 
@@ -97,4 +113,5 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
 
     @Query("SELECT COALESCE(MAX(t.ticketNumber), 0) FROM TicketModel t WHERE t.project.id = :projectId")
     Long getLastTicketNumberByProject(@Param("projectId") Long projectId);
+
 }

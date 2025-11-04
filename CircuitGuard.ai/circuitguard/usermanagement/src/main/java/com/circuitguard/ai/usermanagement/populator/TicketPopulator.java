@@ -63,6 +63,16 @@ public class TicketPopulator implements Populator<TicketModel, TicketDTO> {
             target.setAssignedToName(source.getAssignedTo().getFullName());
         }
 
+        if (source.getCategory() != null) {
+            target.setCategoryId(source.getCategory().getId());
+            target.setCategoryName(source.getCategory().getName());
+        }
+
+        if (source.getSubCategory() != null) {
+            target.setSubCategoryId(source.getSubCategory().getId());
+            target.setSubCategoryName(source.getSubCategory().getName());
+        }
+
         if (source.getComments() != null) {
             target.setComments(
                     source.getComments().stream()
