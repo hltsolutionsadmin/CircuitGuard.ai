@@ -40,7 +40,7 @@ public class UserModel extends GenericModel {
     private String fullName;
 
     @Column(name = "USERNAME")
-    @Size(min = 3, max = 200, message = "Username must be between 3 and 200 characters")
+    @Size(min = 3, max = 2000, message = "Username must be between 3 and 200 characters")
     private String username;
 
     @Email

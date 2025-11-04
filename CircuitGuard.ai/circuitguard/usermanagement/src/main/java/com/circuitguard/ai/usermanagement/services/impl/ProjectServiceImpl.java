@@ -1,27 +1,35 @@
 package com.circuitguard.ai.usermanagement.services.impl;
 
+import com.circuitguard.ai.usermanagement.dto.OrganizationDTO;
 import com.circuitguard.ai.usermanagement.dto.ProjectDTO;
 import com.circuitguard.ai.usermanagement.dto.ProjectStatsDTO;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
 import com.circuitguard.ai.usermanagement.model.OrganizationModel;
 import com.circuitguard.ai.usermanagement.model.ProjectModel;
+import com.circuitguard.ai.usermanagement.model.RoleModel;
 import com.circuitguard.ai.usermanagement.model.UserModel;
 import com.circuitguard.ai.usermanagement.populator.ProjectPopulator;
 import com.circuitguard.ai.usermanagement.repository.OrganizationRepository;
 import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
 import com.circuitguard.ai.usermanagement.repository.UserRepository;
 import com.circuitguard.ai.usermanagement.services.ProjectService;
+import com.circuitguard.ai.usermanagement.services.RoleService;
+import com.circuitguard.ai.usermanagement.services.UserService;
 import com.circuitguard.ai.usermanagement.utils.ProjectCodeGenerator;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
+import com.circuitguard.commonservice.enums.ERole;
 import lombok.AllArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,6 +42,8 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectPopulator projectPopulator;
     private final OrganizationRepository organizationRepository;
     private final ProjectCodeGenerator projectCodeGenerator;
+    private final RoleService roleService;
+    private final UserService userService;
 
     @Override
     @Transactional
@@ -129,6 +139,9 @@ public class ProjectServiceImpl implements ProjectService {
 
         if (dto.getClientId() != null) {
             model.setClient(getUserById(dto.getClientId(), ErrorCode.CLIENT_NOT_FOUND));
+        } else if (dto.getClientUsername() != null && dto.getCleintFullName() != null) {
+            UserModel newClient = registerNewClient(dto);
+            model.setClient(newClient);
         }
 
         if (dto.getProjectManagerId() != null) {
@@ -148,6 +161,30 @@ public class ProjectServiceImpl implements ProjectService {
                 userRepository.findById(userId)
                         .orElseThrow(() -> new HltCustomerException(errorCode));
     }
+    private UserModel registerNewClient(ProjectDTO dto) {
+        UserModel user = new UserModel();
+
+        user.setUsername(dto.getClientEmail());
+        user.setFullName(dto.getCleintFullName());
+        user.setPrimaryContact(dto.getClientEmail());
+        user.setPrimaryContactHash(DigestUtils.sha256Hex(dto.getClientEmail()));
+        user.setPassword(dto.getCleintPassword());
+        user.setRecentActivityDate(LocalDate.now());
+
+        if (dto.getClientEmail() != null && !dto.getClientEmail().isBlank()) {
+            user.setEmail(dto.getClientEmail().trim());
+            user.setEmailHash(DigestUtils.sha256Hex(dto.getClientEmail().trim().toLowerCase()));
+        }
+
+        Set<RoleModel> roles = Set.of(
+                roleService.findByErole(ERole.ROLE_CLIENT_ADMIN),
+                roleService.findByErole(ERole.ROLE_USER)
+        );
+        user.setRoles(roles);
+
+        return userService.saveUser(user);
+    }
+
 
     private OrganizationModel getOrganizationById(Long orgId, ErrorCode errorCode) {
         if (orgId == null) return null;

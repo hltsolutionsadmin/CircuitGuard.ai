@@ -65,4 +65,10 @@ public class ProjectDTO {
     private List<UserAssignmentDTO> projectMembers;
 
     private List<ProjectTechDTO> technologyStack;
+
+    private String clientUsername;
+    private String cleintPassword;
+    private String cleintFullName;
+    private String cleintPrimaryContact;
+    private String clientEmail;
 }

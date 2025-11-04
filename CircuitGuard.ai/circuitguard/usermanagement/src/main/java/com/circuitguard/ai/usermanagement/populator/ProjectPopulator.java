@@ -46,6 +46,7 @@ public class ProjectPopulator implements Populator<ProjectModel, ProjectDTO> {
         // References
         if (source.getClient() != null) {
             target.setClientId(source.getClient().getId());
+            target.setCleintFullName(source.getClient().getFullName());
         }
         if (source.getProjectManager() != null) {
             target.setProjectManagerId(source.getProjectManager().getId());
