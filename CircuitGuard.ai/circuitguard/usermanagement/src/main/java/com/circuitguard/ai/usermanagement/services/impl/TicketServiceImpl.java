@@ -36,6 +36,8 @@ public class TicketServiceImpl implements TicketService {
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final TicketCommentRepository ticketCommentRepository;
+    private final CategoryRepository categoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
 
     private final TicketPopulator ticketPopulator;
     private final TicketCommentPopulator ticketCommentPopulator;
@@ -264,6 +266,18 @@ public class TicketServiceImpl implements TicketService {
             UserModel assignedTo = userRepository.findById(dto.getAssignedToId())
                     .orElseThrow(() -> new HltCustomerException(ErrorCode.USER_NOT_FOUND));
             model.setAssignedTo(assignedTo);
+        }
+
+        if (dto.getCategoryId() != null) {
+            CategoryModel category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.CATEGORY_NOT_FOUND));
+            model.setCategory(category);
+        }
+
+        if (dto.getSubCategoryId() != null) {
+            SubCategoryModel subCategory = subCategoryRepository.findById(dto.getSubCategoryId())
+                    .orElseThrow(() -> new HltCustomerException(ErrorCode.SUBCATEGORY_NOT_FOUND));
+            model.setSubCategory(subCategory);
         }
 
         if (dto.getUserGroupDTO() != null && dto.getUserGroupDTO().getId() != null) {

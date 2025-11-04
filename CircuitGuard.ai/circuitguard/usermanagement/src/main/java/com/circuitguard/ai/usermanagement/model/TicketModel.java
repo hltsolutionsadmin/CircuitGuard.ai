@@ -52,6 +52,14 @@ public class TicketModel extends GenericModel {
     @JoinColumn(name = "ASSIGNED_TO")
     private UserModel assignedTo;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORY_ID")
+    private CategoryModel category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "SUB_CATEGORY_ID")
+    private SubCategoryModel subCategory;
+
     @Column(name = "RESOLVED_AT")
     private LocalDateTime resolvedAt;
 

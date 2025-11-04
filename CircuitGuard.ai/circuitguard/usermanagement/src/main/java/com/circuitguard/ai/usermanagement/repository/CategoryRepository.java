@@ -13,6 +13,7 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<CategoryModel, Long> {
     boolean existsByOrganizationIdAndNameIgnoreCase(Long organizationId, String name);
+    @EntityGraph(attributePaths = "subCategories")
     Page<CategoryModel> findByOrganizationId(Long organizationId, Pageable pageable);
 
 
