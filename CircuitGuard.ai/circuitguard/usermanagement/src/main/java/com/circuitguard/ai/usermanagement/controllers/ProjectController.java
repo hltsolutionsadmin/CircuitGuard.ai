@@ -64,4 +64,12 @@ public class ProjectController {
         ProjectStatsDTO stats = projectService.getProjectStats();
         return ResponseEntity.ok(StandardResponse.single("Projects stats fetch successful",stats));
     }
+
+    @GetMapping("/my")
+    public StandardResponse<Page<ProjectDTO>> getMyProjects(
+            Pageable pageable
+    ) {
+        Page<ProjectDTO> projects = projectService.getProjectsForCurrentUser(pageable);
+        return StandardResponse.page("My projects fetched successfully", projects);
+    }
 }

@@ -12,12 +12,14 @@ import com.circuitguard.ai.usermanagement.populator.ProjectPopulator;
 import com.circuitguard.ai.usermanagement.repository.OrganizationRepository;
 import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
 import com.circuitguard.ai.usermanagement.repository.UserRepository;
+import com.circuitguard.ai.usermanagement.repository.UserAssignmentRepository;
 import com.circuitguard.ai.usermanagement.services.ProjectService;
 import com.circuitguard.ai.usermanagement.services.RoleService;
 import com.circuitguard.ai.usermanagement.services.UserService;
 import com.circuitguard.ai.usermanagement.utils.ProjectCodeGenerator;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
+import com.circuitguard.utils.SecurityUtils;
 import com.circuitguard.commonservice.enums.ERole;
 import lombok.AllArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -44,6 +46,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectCodeGenerator projectCodeGenerator;
     private final RoleService roleService;
     private final UserService userService;
+    private final UserAssignmentRepository userAssignmentRepository;
 
     @Override
     @Transactional
@@ -121,6 +124,31 @@ public class ProjectServiceImpl implements ProjectService {
                 .build();
     }
 
+
+    @Override
+    public Page<ProjectDTO> getProjectsForCurrentUser(Pageable pageable) {
+        Long userId = SecurityUtils.getCurrentUserDetails().getId();
+
+        java.util.List<com.circuitguard.ai.usermanagement.model.UserAssignmentModel> assignments =
+                userAssignmentRepository.findByUser_IdAndActiveTrue(userId);
+
+        java.util.List<Long> projectIds = assignments.stream()
+                .filter(a -> a.getTargetType() == com.circuitguard.ai.usermanagement.dto.enums.AssignmentTargetType.PROJECT)
+                .map(com.circuitguard.ai.usermanagement.model.UserAssignmentModel::getTargetId)
+                .distinct()
+                .collect(java.util.stream.Collectors.toList());
+
+        if (projectIds.isEmpty()) {
+            return new PageImpl<>(java.util.Collections.emptyList(), pageable, 0);
+        }
+
+        Page<ProjectModel> page = projectRepository.findByIdIn(projectIds, pageable);
+        java.util.List<ProjectDTO> dtos = page.getContent().stream()
+                .map(projectPopulator::toDTO)
+                .collect(java.util.stream.Collectors.toList());
+
+        return new PageImpl<>(dtos, pageable, page.getTotalElements());
+    }
 
     private ProjectModel mapDtoToModel(ProjectDTO dto, ProjectModel model) {
 

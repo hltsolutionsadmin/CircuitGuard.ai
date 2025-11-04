@@ -19,4 +19,6 @@ public interface ProjectService {
 
     ProjectStatsDTO getProjectStats();
 
+    Page<ProjectDTO> getProjectsForCurrentUser(Pageable pageable);
+
 }

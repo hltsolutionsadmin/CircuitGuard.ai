@@ -3,7 +3,6 @@ package com.circuitguard.ai.usermanagement.repository;
 import com.circuitguard.ai.usermanagement.model.ProjectModel;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,8 +14,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface ProjectRepository extends JpaRepository<ProjectModel, Long>, JpaSpecificationExecutor<ProjectModel> {
+  @Repository
+  public interface ProjectRepository extends JpaRepository<ProjectModel, Long>, JpaSpecificationExecutor<ProjectModel> {
 
     Page<ProjectModel> findByOwnerOrganization_IdAndStatus(Long organisationId, ProjectStatus status, Pageable pageable);
 
@@ -38,20 +37,20 @@ public interface ProjectRepository extends JpaRepository<ProjectModel, Long>, Jp
     @Query("SELECT p FROM ProjectModel p WHERE p.ownerOrganization.id = :orgId OR p.clientOrganization.id = :orgId")
     Page<ProjectModel> findByOrganization(@Param("orgId") Long organizationId, Pageable pageable);
 
-    Optional<ProjectModel> findById( Long targetId);
+    Optional<ProjectModel> findById(Long targetId);
 
-    boolean existsByProjectCode( String projectCode);
+    boolean existsByProjectCode(String projectCode);
 
     @Query("SELECT COUNT(p) FROM ProjectModel p")
     long countAllProjects();
 
-    @Query("SELECT COUNT(p) FROM ProjectModel p WHERE p.status = com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus.IN_PROGRESS")
     long countActiveProjects();
 
     @Query("SELECT COUNT(p) FROM ProjectModel p WHERE p.status = com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus.COMPLETED")
     long countCompletedProjects();
+      @Query("SELECT COUNT(p) FROM ProjectModel p WHERE p.status = com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus.ON_HOLD")
+      long countOnHoldProjects();
 
-    @Query("SELECT COUNT(p) FROM ProjectModel p WHERE p.status = com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus.ON_HOLD")
-    long countOnHoldProjects();
+      Page<ProjectModel> findByIdIn(List<Long> ids, Pageable pageable);
 
-}
+  }
