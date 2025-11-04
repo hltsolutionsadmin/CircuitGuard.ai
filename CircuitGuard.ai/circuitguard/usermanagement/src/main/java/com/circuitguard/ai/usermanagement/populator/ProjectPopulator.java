@@ -38,6 +38,7 @@ public class ProjectPopulator implements Populator<ProjectModel, ProjectDTO> {
         target.setDueDate(source.getDueDate());
         target.setStatus(source.getStatus());
         target.setType(source.getType());
+        target.setSlaTier(source.getSlaTier());
         target.setProgressPercentage(source.getProgressPercentage());
         target.setBudgetRange(source.getBudgetRange());
         target.setExpectedTeamSize(source.getExpectedTeamSize());

@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.dto;
 
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectType;
+import com.circuitguard.ai.usermanagement.dto.enums.SlaTier;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -46,6 +47,8 @@ public class ProjectDTO {
     private ProjectStatus status = ProjectStatus.PLANNED;
 
     private ProjectType type;
+
+    private SlaTier slaTier;
 
     @NotNull(message = "Owner organization ID is required")
     private Long ownerOrganizationId;

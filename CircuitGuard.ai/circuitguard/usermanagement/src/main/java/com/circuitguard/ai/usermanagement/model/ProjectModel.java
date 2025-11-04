@@ -2,6 +2,7 @@ package com.circuitguard.ai.usermanagement.model;
 
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus;
 import com.circuitguard.ai.usermanagement.dto.enums.ProjectType;
+import com.circuitguard.ai.usermanagement.dto.enums.SlaTier;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +17,8 @@ import java.util.List;
 @Entity
 @Table(name = "PROJECTS", indexes = {
         @Index(name = "idx_project_name", columnList = "NAME"),
-        @Index(name = "idx_project_status", columnList = "STATUS")
+        @Index(name = "idx_project_status", columnList = "STATUS"),
+        @Index(name = "idx_project_sla", columnList = "SLA_TIER")
 })
 @Getter
 @Setter
@@ -61,6 +63,10 @@ public class ProjectModel extends GenericModel {
     @Enumerated(EnumType.STRING)
     @Column(name = "TYPE")
     private ProjectType type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SLA_TIER")
+    private SlaTier slaTier;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_ORG_ID", nullable = true)

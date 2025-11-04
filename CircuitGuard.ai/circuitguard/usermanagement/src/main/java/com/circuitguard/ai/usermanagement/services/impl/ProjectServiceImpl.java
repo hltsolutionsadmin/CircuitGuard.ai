@@ -132,6 +132,11 @@ public class ProjectServiceImpl implements ProjectService {
         if (dto.getDueDate() != null) model.setDueDate(dto.getDueDate());
         if (dto.getStatus() != null) model.setStatus(dto.getStatus());
         if (dto.getType() != null) model.setType(dto.getType());
+        if (dto.getSlaTier() != null) {
+            model.setSlaTier(dto.getSlaTier());
+        } else if (model.getId() == null) {
+            model.setSlaTier(com.circuitguard.ai.usermanagement.dto.enums.SlaTier.STANDARD);
+        }
         if (dto.getProgressPercentage() != null) model.setProgressPercentage(dto.getProgressPercentage());
         if (dto.getBudgetRange() != null) model.setBudgetRange(dto.getBudgetRange());
         if (dto.getExpectedTeamSize() != null) model.setExpectedTeamSize(dto.getExpectedTeamSize());
