@@ -36,6 +36,9 @@ public class TicketPopulator implements Populator<TicketModel, TicketDTO> {
         target.setDescription(source.getDescription());
         target.setPriority(source.getPriority());
         target.setStatus(source.getStatus());
+        target.setIssueType(source.getIssueType());
+        target.setImpact(source.getImpact());
+        target.setUrgency(source.getUrgency());
         target.setDueDate(source.getDueDate());
         target.setResolvedAt(source.getResolvedAt());
         target.setArchived(source.getArchived());
