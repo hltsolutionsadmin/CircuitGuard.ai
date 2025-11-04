@@ -97,4 +97,15 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
 
     @Query("SELECT COALESCE(MAX(t.ticketNumber), 0) FROM TicketModel t WHERE t.project.id = :projectId")
     Long getLastTicketNumberByProject(@Param("projectId") Long projectId);
+
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group"
+    })
+    @Query("SELECT t FROM TicketModel t WHERE (t.createdBy.id = :userId OR t.assignedTo.id = :userId)")
+    Page<TicketModel> findByUserInvolved(@Param("userId") Long userId, Pageable pageable);
 }

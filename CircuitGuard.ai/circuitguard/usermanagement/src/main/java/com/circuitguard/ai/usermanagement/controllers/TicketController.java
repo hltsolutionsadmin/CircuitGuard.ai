@@ -74,6 +74,15 @@ public class TicketController {
         return StandardResponse.single("Ticket status updated successfully", updated);
     }
 
+    @GetMapping("/by-user")
+    public StandardResponse<Page<TicketDTO>> getTicketsByUser(
+            Pageable pageable,
+            @RequestParam(required = false) Long userId
+    ) {
+        Page<TicketDTO> tickets = ticketService.getTicketsForUser(pageable, userId);
+        return StandardResponse.page("User tickets fetched successfully", tickets);
+    }
+
 
 
 }
