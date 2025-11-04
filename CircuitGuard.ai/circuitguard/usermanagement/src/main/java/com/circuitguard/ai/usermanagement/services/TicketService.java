@@ -21,4 +21,6 @@ public interface TicketService {
     TicketDTO assignTicket(Long ticketId, Long assigneeId);
 
     TicketDTO updateTicketStatus(Long ticketId, TicketStatus status);
+
+    Page<TicketDTO> getTicketsForUser(Pageable pageable, Long userId);
 }
