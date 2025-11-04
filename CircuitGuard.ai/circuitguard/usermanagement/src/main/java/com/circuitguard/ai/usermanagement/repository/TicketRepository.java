@@ -124,4 +124,19 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
     })
     @Query("SELECT t FROM TicketModel t WHERE (t.createdBy.id = :userId OR t.assignedTo.id = :userId)")
     Page<TicketModel> findByUserInvolved(@Param("userId") Long userId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group",
+            "category",
+            "subCategory"
+    })
+    @Query("SELECT t FROM TicketModel t WHERE (t.createdBy.id = :userId OR t.assignedTo.id = :userId) AND t.project.id = :projectId")
+    Page<TicketModel> findByUserInvolvedAndProjectId(@Param("userId") Long userId,
+                                                     @Param("projectId") Long projectId,
+                                                     Pageable pageable);
 }

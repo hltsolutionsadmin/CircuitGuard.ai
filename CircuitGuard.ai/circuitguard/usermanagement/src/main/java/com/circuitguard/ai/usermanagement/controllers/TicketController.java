@@ -69,7 +69,8 @@ public class TicketController {
     @PatchMapping("/{ticketId}/status")
     public StandardResponse<TicketDTO> updateTicketStatus(
             @PathVariable Long ticketId,
-            @RequestParam TicketStatus status) {
+            @RequestParam TicketStatus status
+    ) {
         TicketDTO updated = ticketService.updateTicketStatus(ticketId, status);
         return StandardResponse.single("Ticket status updated successfully", updated);
     }
@@ -77,12 +78,10 @@ public class TicketController {
     @GetMapping("/by-user")
     public StandardResponse<Page<TicketDTO>> getTicketsByUser(
             Pageable pageable,
-            @RequestParam(required = false) Long userId
+            @RequestParam(required = false) Long userId,
+            @RequestParam(required = false) Long projectId
     ) {
-        Page<TicketDTO> tickets = ticketService.getTicketsForUser(pageable, userId);
+        Page<TicketDTO> tickets = ticketService.getTicketsForUser(pageable, userId, projectId);
         return StandardResponse.page("User tickets fetched successfully", tickets);
     }
-
-
-
 }

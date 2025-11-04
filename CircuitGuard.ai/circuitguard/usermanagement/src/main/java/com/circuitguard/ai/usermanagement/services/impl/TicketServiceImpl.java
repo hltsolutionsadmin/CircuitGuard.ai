@@ -133,10 +133,12 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Page<TicketDTO> getTicketsForUser(Pageable pageable, Long userId) {
+    public Page<TicketDTO> getTicketsForUser(Pageable pageable, Long userId, Long projectId) {
         Long effectiveUserId = (userId != null) ? userId : SecurityUtils.getCurrentUserDetails().getId();
 
-        Page<TicketModel> page = ticketRepository.findByUserInvolved(effectiveUserId, pageable);
+        Page<TicketModel> page = (projectId != null)
+                ? ticketRepository.findByUserInvolvedAndProjectId(effectiveUserId, projectId, pageable)
+                : ticketRepository.findByUserInvolved(effectiveUserId, pageable);
 
         List<TicketDTO> dtoList = page.getContent().stream()
                 .map(ticketPopulator::toDTO)
