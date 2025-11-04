@@ -20,10 +20,13 @@ public enum ErrorCode {
     ASSIGNMENT_NOT_FOUND(1203, "Assignment not found", HttpStatus.NOT_FOUND),
     INVALID_TARGET_TYPE(2008, "Invalid or unsupported assignment target type", HttpStatus.BAD_REQUEST),
     INVALID_CLIENT_ROLE(2009, "Invalid role assigned for client type", HttpStatus.BAD_REQUEST),
-
+    CATEGORY_NOT_FOUND(2001, "Category not found", HttpStatus.NOT_FOUND),
+    DUPLICATE_CATEGORY(2002, "Category with same name already exists", HttpStatus.CONFLICT),
     ORGANIZATION_NOT_FOUND(1005, "Organization not found", HttpStatus.NOT_FOUND),
     CLIENT_ORGANIZATION_NOT_FOUND(1006, "Client organization not found", HttpStatus.NOT_FOUND),
     GROUP_ALREADY_EXISTS_FOR_PRIORITY(1012, "Group already exists for this priority in the project", HttpStatus.CONFLICT),
+    SUBCATEGORY_NOT_FOUND(2003, "Subcategory not found", HttpStatus.NOT_FOUND),
+    DUPLICATE_SUBCATEGORY(2004, "Subcategory with same name already exists", HttpStatus.CONFLICT),
 
     USER_NOT_FOUND(1000, "User Not Found", HttpStatus.NOT_FOUND),
     SKILL_NOT_FOUND(2001, "Skill not found", HttpStatus.NOT_FOUND),
@@ -77,7 +80,6 @@ public enum ErrorCode {
 
     // Product, Category, Business (3000–3099)
     // ===========================
-    CATEGORY_NOT_FOUND(3001, "Category not found", HttpStatus.NOT_FOUND),
     ALREADY_EXISTS(3003, "Resource already exists", HttpStatus.CONFLICT),
     ROLE_NOT_FOUND(3004, "Role not found", HttpStatus.CONFLICT);
 
