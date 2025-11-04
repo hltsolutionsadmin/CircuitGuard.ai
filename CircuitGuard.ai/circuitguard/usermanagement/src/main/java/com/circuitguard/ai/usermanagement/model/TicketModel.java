@@ -1,7 +1,6 @@
 package com.circuitguard.ai.usermanagement.model;
 
-import com.circuitguard.ai.usermanagement.dto.enums.TicketPriority;
-import com.circuitguard.ai.usermanagement.dto.enums.TicketStatus;
+import com.circuitguard.ai.usermanagement.dto.enums.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -69,4 +68,20 @@ public class TicketModel extends GenericModel {
     @JoinColumn(name = "GROUP_ID")
     private UserGroupModel group;
 
-    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "URGENCY", nullable = false)
+    private Urgency urgency;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ISSUE_TYPE", nullable = false)
+    private IssueType issueType;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "IMPACT", nullable = false)
+    private Impact impact;
+
+
+
+}
