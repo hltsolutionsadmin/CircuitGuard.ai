@@ -182,7 +182,7 @@ public class TicketServiceImpl implements TicketService {
         if (priority != null)
             return ticketRepository.findByPriority(priority, pageable);
 
-        return ticketRepository.findAll(pageable);
+        return ticketRepository.findAllBy(pageable);
     }
 
     private <E extends Enum<E>> E parseEnum(String value, Class<E> enumType, String errorMsg) {

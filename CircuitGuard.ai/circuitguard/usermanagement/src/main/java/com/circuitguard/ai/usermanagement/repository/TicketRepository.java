@@ -9,21 +9,88 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 public interface TicketRepository extends JpaRepository<TicketModel, Long> {
 
-    Page<TicketModel> findByProjectId(Long projectId, Pageable pageable);
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group"
+    })
+    Page<TicketModel> findAllBy(Pageable pageable);
 
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group"
+    })
     Page<TicketModel> findByStatus(TicketStatus status, Pageable pageable);
 
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group"
+    })
     Page<TicketModel> findByPriority(TicketPriority priority, Pageable pageable);
 
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group"
+    })
+    Page<TicketModel> findByProjectId(Long projectId, Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group"
+    })
     Page<TicketModel> findByProjectIdAndStatus(Long projectId, TicketStatus status, Pageable pageable);
 
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group"
+    })
     Page<TicketModel> findByProjectIdAndPriority(Long projectId, TicketPriority priority, Pageable pageable);
 
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group"
+    })
     Page<TicketModel> findByStatusAndPriority(TicketStatus status, TicketPriority priority, Pageable pageable);
 
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group"
+    })
     Page<TicketModel> findByProjectIdAndStatusAndPriority(Long projectId, TicketStatus status, TicketPriority priority, Pageable pageable);
 
     Long countByProject(ProjectModel project);
