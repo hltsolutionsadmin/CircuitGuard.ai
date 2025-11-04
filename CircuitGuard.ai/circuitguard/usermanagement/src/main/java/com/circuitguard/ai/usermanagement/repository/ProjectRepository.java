@@ -44,7 +44,7 @@ import java.util.Optional;
     @Query("SELECT COUNT(p) FROM ProjectModel p")
     long countAllProjects();
 
-    long countActiveProjects();
+
 
     @Query("SELECT COUNT(p) FROM ProjectModel p WHERE p.status = com.circuitguard.ai.usermanagement.dto.enums.ProjectStatus.COMPLETED")
     long countCompletedProjects();

@@ -118,7 +118,6 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectStatsDTO getProjectStats() {
         return ProjectStatsDTO.builder()
                 .totalProjects(projectRepository.countAllProjects())
-                .activeProjects(projectRepository.countActiveProjects())
                 .completedProjects(projectRepository.countCompletedProjects())
                 .onHoldProjects(projectRepository.countOnHoldProjects())
                 .build();
