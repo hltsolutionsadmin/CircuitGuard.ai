@@ -15,7 +15,7 @@ import com.circuitguard.ai.usermanagement.services.TicketService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
 import com.circuitguard.utils.SecurityUtils;
-import com.circuitguard.ai.usermanagement.util.PriorityResolver;
+import com.circuitguard.ai.usermanagement.utils.PriorityResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
