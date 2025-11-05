@@ -2,8 +2,10 @@ package com.circuitguard.ai.usermanagement.services.impl;
 
 import com.circuitguard.ai.usermanagement.dto.CategoryDTO;
 import com.circuitguard.ai.usermanagement.model.CategoryModel;
+import com.circuitguard.ai.usermanagement.model.ProjectModel;
 import com.circuitguard.ai.usermanagement.populator.CategoryPopulator;
 import com.circuitguard.ai.usermanagement.repository.CategoryRepository;
+import com.circuitguard.ai.usermanagement.repository.ProjectRepository;
 import com.circuitguard.ai.usermanagement.services.CategoryService;
 import com.circuitguard.auth.exception.handling.ErrorCode;
 import com.circuitguard.auth.exception.handling.HltCustomerException;
@@ -22,6 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryPopulator categoryPopulator;
+    private final ProjectRepository projectRepository;
 
     @Override
     public CategoryDTO createCategory(CategoryDTO dto) {
@@ -75,6 +78,33 @@ public class CategoryServiceImpl implements CategoryService {
     public Page<CategoryDTO> getAllCategories(Long orgId, Pageable pageable) {
         log.info("Fetching all categories for organizationId={} page={} size={}",
                 orgId, pageable.getPageNumber(), pageable.getPageSize());
+
+        return categoryRepository.findByOrganizationId(orgId, pageable)
+                .map(model -> {
+                    CategoryDTO dto = new CategoryDTO();
+                    categoryPopulator.populate(model, dto);
+                    return dto;
+                });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CategoryDTO> getAllCategoriesByProject(Long projectId, Pageable pageable) {
+        log.info("Fetching categories by projectId={} page={} size={}", projectId, pageable.getPageNumber(), pageable.getPageSize());
+
+        ProjectModel project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new HltCustomerException(ErrorCode.PROJECT_NOT_FOUND));
+
+        Long orgId = null;
+        if (project.getClientOrganization() != null) {
+            orgId = project.getClientOrganization().getId();
+        } else if (project.getOwnerOrganization() != null) {
+            orgId = project.getOwnerOrganization().getId();
+        }
+
+        if (orgId == null) {
+            throw new HltCustomerException(ErrorCode.ORGANIZATION_NOT_FOUND);
+        }
 
         return categoryRepository.findByOrganizationId(orgId, pageable)
                 .map(model -> {
