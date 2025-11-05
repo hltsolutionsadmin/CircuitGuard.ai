@@ -10,30 +10,33 @@ import java.time.format.DateTimeFormatter;
 public class ProjectCodeGenerator {
 
     private static final SecureRandom RANDOM = new SecureRandom();
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
-    private static final int RANDOM_SUFFIX_LENGTH = 4;
-    private static final String DEFAULT_PREFIX = "PRJ";
+    // Compact date to keep code length under 10: yyMM (4 chars)
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyMM");
+    private static final int RANDOM_SUFFIX_LENGTH = 2; // 2 hex chars
+    private static final int ABBR_LENGTH = 3;          // 3 chars from project name
 
 
     public String generateCode(String projectName) {
+        // Result format (no separators):
+        //   <ABBR(3)><DATE(yyMM:4)><HEX(2)>  => total length = 9 (< 10)
         String abbreviation = extractAbbreviation(projectName);
         String datePart = LocalDate.now().format(DATE_FORMAT);
         String randomPart = randomHex(RANDOM_SUFFIX_LENGTH);
 
-        return String.format("%s-%s-%s-%s", DEFAULT_PREFIX, abbreviation, datePart, randomPart);
+        return abbreviation + datePart + randomPart;
     }
 
     private String extractAbbreviation(String name) {
         if (name == null || name.isEmpty()) return "GEN";
-        String[] words = name.split("\\s+");
-        StringBuilder sb = new StringBuilder();
-
-        for (String word : words) {
-            if (!word.isEmpty()) {
-                sb.append(Character.toUpperCase(word.charAt(0)));
-                if (sb.length() >= 4) break;
+        StringBuilder sb = new StringBuilder(ABBR_LENGTH);
+        for (int i = 0; i < name.length() && sb.length() < ABBR_LENGTH; i++) {
+            char c = name.charAt(i);
+            if (Character.isLetterOrDigit(c)) {
+                sb.append(Character.toUpperCase(c));
             }
         }
+        // If not enough alnum chars, pad with 'X'
+        while (sb.length() < ABBR_LENGTH) sb.append('X');
         return sb.toString();
     }
 
