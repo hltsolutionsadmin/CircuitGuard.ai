@@ -139,4 +139,35 @@ public interface TicketRepository extends JpaRepository<TicketModel, Long> {
     Page<TicketModel> findByUserInvolvedAndProjectId(@Param("userId") Long userId,
                                                      @Param("projectId") Long projectId,
                                                      Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group",
+            "category",
+            "subCategory"
+    })
+    @Query("SELECT t FROM TicketModel t WHERE (t.createdBy.id = :userId OR t.assignedTo.id = :userId) AND t.status = :status")
+    Page<TicketModel> findByUserInvolvedAndStatus(@Param("userId") Long userId,
+                                                  @Param("status") TicketStatus status,
+                                                  Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "comments",
+            "comments.createdBy",
+            "project",
+            "createdBy",
+            "assignedTo",
+            "group",
+            "category",
+            "subCategory"
+    })
+    @Query("SELECT t FROM TicketModel t WHERE (t.createdBy.id = :userId OR t.assignedTo.id = :userId) AND t.project.id = :projectId AND t.status = :status")
+    Page<TicketModel> findByUserInvolvedAndProjectIdAndStatus(@Param("userId") Long userId,
+                                                              @Param("projectId") Long projectId,
+                                                              @Param("status") TicketStatus status,
+                                                              Pageable pageable);
 }

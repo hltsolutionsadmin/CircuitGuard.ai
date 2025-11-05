@@ -22,5 +22,5 @@ public interface TicketService {
 
     TicketDTO updateTicketStatus(Long ticketId, TicketStatus status);
 
-    Page<TicketDTO> getTicketsForUser(Pageable pageable, Long userId, Long projectId);
+    Page<TicketDTO> getTicketsForUser(Pageable pageable, Long userId, Long projectId, String status);
 }

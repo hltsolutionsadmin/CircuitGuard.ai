@@ -133,12 +133,21 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Page<TicketDTO> getTicketsForUser(Pageable pageable, Long userId, Long projectId) {
+    public Page<TicketDTO> getTicketsForUser(Pageable pageable, Long userId, Long projectId, String statusStr) {
         Long effectiveUserId = (userId != null) ? userId : SecurityUtils.getCurrentUserDetails().getId();
 
-        Page<TicketModel> page = (projectId != null)
-                ? ticketRepository.findByUserInvolvedAndProjectId(effectiveUserId, projectId, pageable)
-                : ticketRepository.findByUserInvolved(effectiveUserId, pageable);
+        TicketStatus status = parseEnum(statusStr, TicketStatus.class, "Invalid ticket status");
+
+        Page<TicketModel> page;
+        if (projectId != null && status != null) {
+            page = ticketRepository.findByUserInvolvedAndProjectIdAndStatus(effectiveUserId, projectId, status, pageable);
+        } else if (projectId != null) {
+            page = ticketRepository.findByUserInvolvedAndProjectId(effectiveUserId, projectId, pageable);
+        } else if (status != null) {
+            page = ticketRepository.findByUserInvolvedAndStatus(effectiveUserId, status, pageable);
+        } else {
+            page = ticketRepository.findByUserInvolved(effectiveUserId, pageable);
+        }
 
         List<TicketDTO> dtoList = page.getContent().stream()
                 .map(ticketPopulator::toDTO)

@@ -79,9 +79,10 @@ public class TicketController {
     public StandardResponse<Page<TicketDTO>> getTicketsByUser(
             Pageable pageable,
             @RequestParam(required = false) Long userId,
-            @RequestParam(required = false) Long projectId
+            @RequestParam(required = false) Long projectId,
+            @RequestParam(required = false) String status
     ) {
-        Page<TicketDTO> tickets = ticketService.getTicketsForUser(pageable, userId, projectId);
+        Page<TicketDTO> tickets = ticketService.getTicketsForUser(pageable, userId, projectId, status);
         return StandardResponse.page("User tickets fetched successfully", tickets);
     }
 }
