@@ -9,5 +9,6 @@ public interface CategoryService {
     CategoryDTO updateCategory(Long id, CategoryDTO dto);
     CategoryDTO getCategory(Long id);
     Page<CategoryDTO> getAllCategories(Long orgId, Pageable pageable);
+    Page<CategoryDTO> getAllCategoriesByProject(Long projectId, Pageable pageable);
     void deleteCategory(Long id);
 }
